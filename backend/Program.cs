@@ -10,18 +10,25 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseHttpsRedirection();
 }
-
-app.UseHttpsRedirection();
 
 var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
-app.MapGet("/weatherforecast", () =>
+var api = app.MapGroup("/api");
+
+api.MapGet("/health", () => Results.Ok(new
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
+    status = "ok",
+    timestamp = DateTimeOffset.UtcNow
+}));
+
+WeatherForecast[] GetForecast()
+{
+    return Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
         (
             DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
@@ -29,8 +36,12 @@ app.MapGet("/weatherforecast", () =>
             summaries[Random.Shared.Next(summaries.Length)]
         ))
         .ToArray();
-    return forecast;
-})
+}
+
+api.MapGet("/weatherforecast", GetForecast)
+.WithName("GetApiWeatherForecast");
+
+app.MapGet("/weatherforecast", GetForecast)
 .WithName("GetWeatherForecast");
 
 app.Run();
