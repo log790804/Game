@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: game-factory-api
+    runtime: docker
+    plan: starter
+    region: singapore
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: PORT
+        value: "10000"
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: GAME_DATA_ROOT
+        value: /app/storage
+    disk:
+      name: game-data
+      mountPath: /app/storage
+      sizeGB: 1
+
+  - type: web
+    name: game-factory-web
+    runtime: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: VITE_API_BASE_URL
+        value: https://game-factory-api.onrender.com/api
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

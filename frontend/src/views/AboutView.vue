@@ -1,13 +1,13 @@
 <template>
   <main class="about">
     <div class="card">
-      <h1>關於此專案</h1>
-      <p>這是一個使用以下技術建置的 Vue 3 預設專案：</p>
+      <h1>遊戲工廠規劃中</h1>
+      <p>這個頁面先保留作為後續的遊戲分類、活動公告或工廠設定說明。</p>
       <ul>
-        <li>⚡ <strong>Vite</strong> — 極速開發伺服器與打包工具</li>
-        <li>💚 <strong>Vue 3</strong> — Composition API + <code>&lt;script setup&gt;</code></li>
-        <li>🗂️ <strong>Vue Router 4</strong> — SPA 路由管理（含懶加載）</li>
-        <li>🍍 <strong>Pinia</strong> — 輕量狀態管理</li>
+        <li>可以放遊戲分類與主題清單</li>
+        <li>可以放活動公告與最新上架資訊</li>
+        <li>可以放家長模式或年齡分級說明</li>
+        <li>可以放遊戲 component 切換規則</li>
       </ul>
     </div>
   </main>
@@ -15,8 +15,7 @@
 
 <style scoped>
 main.about {
-  min-height: calc(100vh - 60px);
-  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -24,47 +23,38 @@ main.about {
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
+  background: rgba(255, 252, 246, 0.88);
+  border: 1px solid rgba(132, 106, 82, 0.12);
+  border-radius: 24px;
   padding: 2.5rem;
   max-width: 500px;
   width: 100%;
-  backdrop-filter: blur(10px);
-  color: #e2e8f0;
+  box-shadow: 0 20px 40px rgba(111, 87, 66, 0.12);
+  color: #5b493d;
 }
 
 h1 {
   font-size: 1.8rem;
   margin-bottom: 1rem;
-  color: #63b3ed;
+  color: #8a684d;
 }
 
 p {
-  color: #a0aec0;
+  color: #7b695c;
   margin-bottom: 1.2rem;
 }
 
 ul {
   list-style: none;
-  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
 }
 
 li {
-  padding: 0.6rem 1rem;
-  background: rgba(99, 179, 237, 0.08);
-  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  background: rgba(244, 232, 215, 0.68);
+  border-radius: 12px;
   font-size: 0.95rem;
-}
-
-code {
-  background: rgba(99, 179, 237, 0.15);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-family: monospace;
-  color: #90cdf4;
 }
 </style>

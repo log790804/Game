@@ -1,24 +1,23 @@
-<script setup>
-import WelcomeCard from '@/components/WelcomeCard.vue'
-import CounterWidget from '@/components/CounterWidget.vue'
-</script>
-
 <template>
-  <main>
-    <WelcomeCard />
-    <CounterWidget />
+  <main class="home-view">
+    <HomePageHeader />
+    <HomePageContent />
+    <HomePageFooter />
   </main>
 </template>
 
+<script setup>
+import HomePageHeader from '@/components/home/HomePageHeader.vue'
+import HomePageContent from '@/components/home/HomePageContent.vue'
+import HomePageFooter from '@/components/home/HomePageFooter.vue'
+</script>
+
 <style scoped>
-main {
-  min-height: calc(100vh - 60px);
-  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  padding: 2rem;
+.home-view {
+  width: min(1240px, calc(100% - 2rem));
+  margin: 0 auto;
+  display: grid;
+  gap: 1.5rem;
+  padding: 1.5rem 0 2.5rem;
 }
 </style>

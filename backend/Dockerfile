@@ -12,7 +12,10 @@ WORKDIR /app
 
 COPY --from=build /app/publish ./
 
-ENV ASPNETCORE_URLS=http://+:8080
-EXPOSE 8080
+RUN mkdir -p /app/storage
 
-ENTRYPOINT ["dotnet", "backend.dll"]
+ENV PORT=10000
+ENV GAME_DATA_ROOT=/app/storage
+EXPOSE 10000
+
+ENTRYPOINT ["sh", "-c", "ASPNETCORE_URLS=http://+:${PORT:-10000} dotnet backend.dll"]

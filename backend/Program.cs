@@ -1,8 +1,11 @@
+using backend.Game01;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddSingleton<Game01StoreService>();
 
 var app = builder.Build();
 
@@ -25,6 +28,38 @@ api.MapGet("/health", () => Results.Ok(new
     status = "ok",
     timestamp = DateTimeOffset.UtcNow
 }));
+
+var game01 = api.MapGroup("/game01");
+
+game01.MapGet("/", async (Game01StoreService storeService) =>
+{
+    var store = await storeService.GetStoreAsync();
+    return Results.Ok(store);
+});
+
+game01.MapPut("/state", async (Game01State state, Game01StoreService storeService) =>
+{
+    var store = await storeService.SaveStateAsync(state);
+    return Results.Ok(store);
+});
+
+game01.MapPost("/reset", async (Game01ResetRequest request, Game01StoreService storeService) =>
+{
+    var store = await storeService.ResetStateAsync(request);
+    return Results.Ok(store);
+});
+
+game01.MapPost("/records", async (Game01Record record, Game01StoreService storeService) =>
+{
+    var store = await storeService.AppendRecordAsync(record);
+    return Results.Ok(store);
+});
+
+game01.MapDelete("/records", async (Game01StoreService storeService) =>
+{
+    var store = await storeService.ClearRecordsAsync();
+    return Results.Ok(store);
+});
 
 WeatherForecast[] GetForecast()
 {

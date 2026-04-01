@@ -17,8 +17,7 @@
     "@vitejs/plugin-vue": "^5.0.0",
     "vite": "^5.0.0"
   },
-  "description": "Vue 3 預設專案，使用 Vite 建置。",
-  "main": "vite.config.js",
-  "author": "",
-  "license": "ISC"
+  "engines": {
+    "node": ">=20"
+  }
 }

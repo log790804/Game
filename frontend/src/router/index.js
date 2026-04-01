@@ -10,9 +10,13 @@ const router = createRouter({
       component: HomeView
     },
     {
+      path: '/game01',
+      name: 'game01',
+      component: () => import('../games/game01/Game01View.vue')
+    },
+    {
       path: '/about',
       name: 'about',
-      // 懶加載 (lazy-loaded)
       component: () => import('../views/AboutView.vue')
     }
   ]
