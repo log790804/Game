@@ -63,7 +63,7 @@
           <div class="records-heading">
             <div>
               <p class="eyebrow">遊戲紀錄</p>
-              <h2>game01.json 已保存的局數</h2>
+              <h2>目前保存在瀏覽器本機資料</h2>
             </div>
             <span>{{ records.length }} 筆</span>
           </div>
@@ -162,8 +162,8 @@ async function loadStore() {
       await persistCurrentState()
       await triggerShuffleAnimation()
     }
-  } catch (error) {
-    ui.error = '讀取 game01 資料失敗，已先載入預設盤面。'
+  } catch {
+    ui.error = '讀取本機遊戲資料失敗，已先載入預設盤面。'
     hydrateGame(createNextGameState())
   } finally {
     ui.loading = false
@@ -184,7 +184,7 @@ async function startNewGame() {
     hydrateGame(createNextGameState())
     await persistCurrentState()
     await triggerShuffleAnimation()
-  } catch (error) {
+  } catch {
     ui.error = '開始新局失敗，請稍後再試。'
   } finally {
     ui.loading = false
@@ -199,8 +199,8 @@ async function clearRecords() {
   try {
     const store = await clearGame01Records()
     replaceRecords(store.records ?? [])
-  } catch (error) {
-    ui.error = '清空紀錄失敗，請稍後再試。'
+  } catch {
+    ui.error = '清空本機紀錄失敗，請稍後再試。'
   }
 }
 
@@ -339,8 +339,8 @@ async function persistCurrentState() {
   try {
     const store = await saveGame01State(toPlainGameState())
     replaceRecords(store.records ?? [])
-  } catch (error) {
-    ui.error = '儲存 game01.json 失敗，請確認後端是否正常啟動。'
+  } catch {
+    ui.error = '儲存本機遊戲資料失敗，請確認瀏覽器允許 localStorage。'
   }
 }
 
@@ -363,8 +363,8 @@ async function commitFinishedRecord() {
 
     gameState.recordCommitted = true
     replaceRecords(store.records ?? [])
-  } catch (error) {
-    ui.error = '寫入遊戲紀錄失敗，請稍後再試。'
+  } catch {
+    ui.error = '寫入本機遊戲紀錄失敗，請稍後再試。'
   }
 }
 
