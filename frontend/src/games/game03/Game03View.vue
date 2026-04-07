@@ -31,22 +31,23 @@
 
       <aside class="sidebar">
         <section class="panel">
-          <p class="eyebrow">Tower Bloxx Style</p>
+          <p class="eyebrow">Tower Bloxx 風格</p>
           <h2>雙人同步吊車疊樓</h2>
           <p>
-            兩位玩家同時操作自己的吊車，不必輪流等待。按下按鍵後，房屋樓層會從吊車落下，接上自己的高樓；偏太多就算失誤。
+            玩家 1 和玩家 2 可以同時遊玩。左右兩側各自擁有獨立視角，
+            當高樓逐漸變高時，畫面會依照各自樓層高度移動，避免看不到吊車或最新樓層。
           </p>
 
           <div class="controls-grid">
             <div>
               <strong>玩家 1</strong>
-              <span>釋放樓層：F</span>
-              <span>左側塔</span>
+              <span>按 F 釋放樓層</span>
+              <span>左側畫面</span>
             </div>
             <div>
               <strong>玩家 2</strong>
-              <span>釋放樓層：L</span>
-              <span>右側塔</span>
+              <span>按 L 釋放樓層</span>
+              <span>右側畫面</span>
             </div>
           </div>
 
@@ -71,7 +72,7 @@
               class="primary"
               @click="startGame"
             >
-              {{ state.mode === 'playing' ? '重新開局' : '開始遊戲' }}
+              {{ state.mode === 'playing' ? '重新開始' : '開始遊戲' }}
             </button>
             <button
               type="button"
@@ -108,14 +109,14 @@
             >
               <strong>{{ record.winner }}</strong>
               <span>{{ record.playerOne.floors }} : {{ record.playerTwo.floors }} 層</span>
-              <p>風速 {{ record.wind }} ｜ {{ record.finishedAtLabel }}</p>
+              <p>風速 {{ record.wind }} / {{ record.finishedAtLabel }}</p>
             </article>
           </div>
           <p
             v-else
             class="empty-text"
           >
-            還沒有對戰紀錄，先開始第一局吧。
+            目前還沒有本機紀錄，先玩一局就會儲存在這個瀏覽器中。
           </p>
         </section>
       </aside>
@@ -128,16 +129,34 @@ import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { clearGame03Records, fetchGame03Store, saveGame03Record } from './game03Storage'
 
+const FLOOR_IMAGE_URLS = [
+  new URL('./assets/floors/floor-01.png', import.meta.url).href,
+  new URL('./assets/floors/floor-02.png', import.meta.url).href,
+  new URL('./assets/floors/floor-03.png', import.meta.url).href,
+  new URL('./assets/floors/floor-04.png', import.meta.url).href,
+  new URL('./assets/floors/floor-05.png', import.meta.url).href,
+  new URL('./assets/floors/floor-06.png', import.meta.url).href,
+  new URL('./assets/floors/floor-07.png', import.meta.url).href,
+  new URL('./assets/floors/floor-08.png', import.meta.url).href,
+  new URL('./assets/floors/floor-09.png', import.meta.url).href,
+  new URL('./assets/floors/floor-10.png', import.meta.url).href
+]
+
 const canvasRef = ref(null)
 const stageRef = ref(null)
 const records = ref([])
+const floorImages = ref([])
 
 const WIDTH = 900
 const HEIGHT = 760
+const VIEW_WIDTH = WIDTH / 2
 const BLOCK_WIDTH = 118
 const BLOCK_HEIGHT = 56
 const MAX_MISSES = 5
 const GRAVITY = 980
+const TOWER_BASE_Y = HEIGHT - 70
+const CRANE_TO_TOWER_GAP = 500
+const CRANE_SCREEN_Y = 92
 
 const state = reactive(createInitialState())
 const windLabel = computed(() => `${state.windSpeed.toFixed(1)} m/s`)
@@ -148,6 +167,8 @@ let resizeObserver = null
 
 onMounted(async () => {
   await loadRecords()
+  floorImages.value = await loadFloorImages()
+
   const canvas = canvasRef.value
   const context = canvas?.getContext('2d')
   if (!canvas || !context) return
@@ -186,25 +207,26 @@ function createInitialState() {
     windSpeed: 1.0,
     windPhase: 0,
     players: [
-      createPlayer('玩家 1', 285, '#f0a467', 0),
-      createPlayer('玩家 2', 615, '#83bfff', Math.PI)
+      createPlayer('玩家 1', 285, '#f0a467', 0, 0),
+      createPlayer('玩家 2', 615, '#83bfff', Math.PI, 1)
     ],
     particles: []
   }
 }
 
-function createPlayer(name, towerX, color, phaseOffset) {
+function createPlayer(name, towerX, color, phaseOffset, index) {
   return {
     name,
     towerX,
     color,
     phaseOffset,
+    index,
     floors: [],
     misses: 0,
     lean: 0,
     cranePhase: phaseOffset,
     fallingBlock: null,
-    message: '等待開始'
+    message: '準備中'
   }
 }
 
@@ -232,13 +254,8 @@ function handleKeyDown(event) {
     return
   }
 
-  if (key === 'f') {
-    releaseBlock(0)
-  }
-
-  if (key === 'l') {
-    releaseBlock(1)
-  }
+  if (key === 'f') releaseBlock(0)
+  if (key === 'l') releaseBlock(1)
 }
 
 function loop(timestamp) {
@@ -247,7 +264,6 @@ function loop(timestamp) {
   if (!context) return
 
   if (!lastTimestamp) lastTimestamp = timestamp
-
   const delta = Math.min((timestamp - lastTimestamp) / 1000, 0.033)
   lastTimestamp = timestamp
   step(delta)
@@ -266,9 +282,7 @@ function step(delta) {
 
   for (const player of state.players) {
     player.cranePhase += delta * getCraneSpeed(player)
-    if (player.fallingBlock) {
-      updateFallingBlock(delta, player)
-    }
+    if (player.fallingBlock) updateFallingBlock(delta, player)
   }
 }
 
@@ -286,7 +300,8 @@ function releaseBlock(playerIndex) {
     height: BLOCK_HEIGHT,
     vy: 40,
     drift: getWindDrift(player),
-    color: player.color
+    color: player.color,
+    imageIndex: getNextImageIndex(player)
   }
   player.message = '樓層下落中'
 }
@@ -313,8 +328,8 @@ function judgeLanding(block, player) {
 
   if (absOffset > tolerance) {
     player.misses += 1
-    player.message = `沒接上，失誤 ${player.misses}/${MAX_MISSES}`
-    createDust(block.x + block.width / 2, block.y, '#ff9b7a')
+    player.message = `失誤 ${player.misses}/${MAX_MISSES}`
+    createDust(player, block.x + block.width / 2, block.y, '#ff9b7a')
   } else {
     const accuracy = Math.max(0, Math.round(100 - (absOffset / tolerance) * 100))
     player.lean = clamp(player.lean + offset * 0.075, -68, 68)
@@ -324,25 +339,26 @@ function judgeLanding(block, player) {
       width: BLOCK_WIDTH,
       height: BLOCK_HEIGHT,
       color: player.color,
+      imageIndex: block.imageIndex,
       offset
     })
     player.message = `成功 ${player.floors.length} 層，準度 ${accuracy}%`
-    createDust(block.x + block.width / 2, block.y, player.color)
+    createDust(player, block.x + block.width / 2, block.y, player.color)
   }
 
-  if (state.players.every((item) => item.misses >= MAX_MISSES)) {
-    finishGame()
-  }
+  if (state.players.every((item) => item.misses >= MAX_MISSES)) finishGame()
 }
 
 function finishGame() {
   state.mode = 'gameover'
   const [playerOne, playerTwo] = state.players
+
   if (playerOne.floors.length === playerTwo.floors.length) {
-    state.winner = '本局平手'
+    state.winner = '平手'
   } else {
-    state.winner = playerOne.floors.length > playerTwo.floors.length ? `${playerOne.name} 勝利` : `${playerTwo.name} 勝利`
+    state.winner = playerOne.floors.length > playerTwo.floors.length ? '玩家 1 勝利' : '玩家 2 勝利'
   }
+
   saveRecord()
 }
 
@@ -373,7 +389,7 @@ async function saveRecord() {
 }
 
 function playerStatus(player) {
-  return `${player.floors.length} 層 / 失誤 ${player.misses}`
+  return `${player.floors.length} 層 / ${player.misses} 次失誤`
 }
 
 function getCranePosition(player) {
@@ -381,8 +397,17 @@ function getCranePosition(player) {
   const amplitude = 96 + Math.min(62, heightFactor * 3.5 + state.windSpeed * 6)
   return {
     x: player.towerX + Math.sin(player.cranePhase) * amplitude,
-    y: 96
+    y: getCraneY(player)
   }
+}
+
+function getCraneY(player) {
+  return getTowerTop(player) - CRANE_TO_TOWER_GAP
+}
+
+function getPlayerCameraY(player) {
+  // 起始時先固定地基位置，等吊車接近可視畫面上緣時再開始追蹤。
+  return Math.min(0, getCraneY(player) - CRANE_SCREEN_Y)
 }
 
 function getCraneSpeed(player) {
@@ -398,8 +423,22 @@ function getWindDrift(player) {
   return Math.sin(state.windPhase + player.phaseOffset) * state.windSpeed * 15
 }
 
+function getNextImageIndex(player) {
+  const playerOffset = player.index * 5
+  return (player.floors.length + playerOffset) % FLOOR_IMAGE_URLS.length
+}
+
+function loadFloorImages() {
+  return Promise.all(FLOOR_IMAGE_URLS.map((url) => new Promise((resolve) => {
+    const image = new Image()
+    image.onload = () => resolve(image)
+    image.onerror = () => resolve(null)
+    image.src = url
+  })))
+}
+
 function getTowerTop(player) {
-  return HEIGHT - 70 - player.floors.length * BLOCK_HEIGHT
+  return TOWER_BASE_Y - player.floors.length * BLOCK_HEIGHT
 }
 
 function getTowerSway(player) {
@@ -422,9 +461,10 @@ function updateParticles(delta) {
     .filter((particle) => particle.life > 0)
 }
 
-function createDust(x, y, color) {
+function createDust(player, x, y, color) {
   for (let index = 0; index < 12; index += 1) {
     state.particles.push({
+      ownerIndex: player.index,
       x,
       y,
       vx: (Math.random() - 0.5) * 130,
@@ -437,49 +477,84 @@ function createDust(x, y, color) {
 
 function render(context) {
   context.clearRect(0, 0, WIDTH, HEIGHT)
-  drawBackground(context)
-  drawPlayerTower(context, state.players[0])
-  drawPlayerTower(context, state.players[1])
-  drawCrane(context, state.players[0])
-  drawCrane(context, state.players[1])
-  drawFallingBlock(context, state.players[0])
-  drawFallingBlock(context, state.players[1])
-  drawParticles(context)
+  drawPlayerViewport(context, state.players[0], 0)
+  drawPlayerViewport(context, state.players[1], 1)
+  drawSplitDivider(context)
   drawHud(context)
 
   if (state.mode === 'menu') {
-    drawOverlay(context, '高樓疊疊樂', '按 Enter 或右側按鈕開始')
+    drawOverlay(context, '高樓疊疊樂', '按 Enter 開始，玩家 1 和玩家 2 可以同步疊樓。')
   }
 
   if (state.mode === 'gameover') {
-    drawOverlay(context, state.winner, '按 Enter 或右側按鈕重新開局')
+    drawOverlay(context, state.winner, '按 Enter 重新開始，挑戰更高的樓層。')
   }
 }
 
-function drawBackground(context) {
+function drawPlayerViewport(context, player, playerIndex) {
+  const viewportX = playerIndex * VIEW_WIDTH
+  const cameraY = getPlayerCameraY(player)
+
+  context.save()
+  context.beginPath()
+  context.rect(viewportX, 0, VIEW_WIDTH, HEIGHT)
+  context.clip()
+
+  drawBackground(context, viewportX, playerIndex)
+
+  context.save()
+  context.translate(viewportX + VIEW_WIDTH / 2 - player.towerX, -cameraY)
+  drawPlayerTower(context, player)
+  drawCrane(context, player)
+  drawFallingBlock(context, player)
+  drawParticles(context, player)
+  context.restore()
+
+  drawViewportLabel(context, player, viewportX)
+  context.restore()
+}
+
+function drawBackground(context, viewportX = 0, playerIndex = 0) {
   const gradient = context.createLinearGradient(0, 0, 0, HEIGHT)
   gradient.addColorStop(0, '#cfeeff')
   gradient.addColorStop(0.55, '#fff4d8')
   gradient.addColorStop(1, '#f0c99f')
   context.fillStyle = gradient
-  context.fillRect(0, 0, WIDTH, HEIGHT)
+  context.fillRect(viewportX, 0, VIEW_WIDTH, HEIGHT)
 
-  context.fillStyle = 'rgba(255,255,255,0.72)'
+  context.fillStyle = 'rgba(255, 255, 255, 0.72)'
   context.beginPath()
-  context.arc(140, 112, 42, 0, Math.PI * 2)
-  context.arc(178, 112, 55, 0, Math.PI * 2)
-  context.arc(226, 112, 42, 0, Math.PI * 2)
+  context.arc(viewportX + 98 + playerIndex * 24, 112, 42, 0, Math.PI * 2)
+  context.arc(viewportX + 136 + playerIndex * 24, 112, 55, 0, Math.PI * 2)
+  context.arc(viewportX + 184 + playerIndex * 24, 112, 42, 0, Math.PI * 2)
   context.fill()
 
   context.fillStyle = 'rgba(126, 92, 60, 0.12)'
-  for (let index = 0; index < 9; index += 1) {
-    const x = index * 110
+  for (let index = 0; index < 5; index += 1) {
+    const x = viewportX + index * 96
     const height = 68 + (index % 3) * 28
     context.fillRect(x, HEIGHT - 58 - height, 70, height)
   }
 
   context.fillStyle = 'rgba(126, 92, 60, 0.2)'
-  context.fillRect(0, HEIGHT - 58, WIDTH, 58)
+  context.fillRect(viewportX, HEIGHT - 58, VIEW_WIDTH, 58)
+}
+
+function drawSplitDivider(context) {
+  context.fillStyle = 'rgba(255, 252, 246, 0.92)'
+  context.fillRect(VIEW_WIDTH - 3, 0, 6, HEIGHT)
+  context.fillStyle = 'rgba(95, 72, 54, 0.22)'
+  context.fillRect(VIEW_WIDTH - 1, 0, 2, HEIGHT)
+}
+
+function drawViewportLabel(context, player, viewportX) {
+  context.fillStyle = 'rgba(255, 252, 246, 0.78)'
+  context.fillRect(viewportX + 18, HEIGHT - 82, VIEW_WIDTH - 36, 54)
+  context.fillStyle = '#4f3d31'
+  context.font = '700 18px "Segoe UI"'
+  context.textAlign = 'center'
+  context.fillText(`${player.name} ${player.floors.length} 層 / 失誤 ${player.misses}/${MAX_MISSES}`, viewportX + VIEW_WIDTH / 2, HEIGHT - 49)
+  context.textAlign = 'start'
 }
 
 function drawCrane(context, player) {
@@ -505,30 +580,23 @@ function drawCrane(context, player) {
   context.lineTo(crane.x, lineEndY)
   context.stroke()
 
-  drawHouseBlock(context, crane.x - BLOCK_WIDTH / 2, lineEndY, BLOCK_WIDTH, BLOCK_HEIGHT, player.color, true)
+  drawHouseBlock(context, crane.x - BLOCK_WIDTH / 2, lineEndY, BLOCK_WIDTH, BLOCK_HEIGHT, player.color, true, getNextImageIndex(player))
 }
 
 function drawPlayerTower(context, player) {
   context.fillStyle = 'rgba(80, 62, 46, 0.22)'
-  context.fillRect(player.towerX - 86, HEIGHT - 70, 172, 12)
+  context.fillRect(player.towerX - 86, TOWER_BASE_Y, 172, 12)
 
   player.floors.forEach((floor, index) => {
     const swayOffset = Math.sin(state.windPhase + player.phaseOffset + index * 0.2) * state.windSpeed * (index + 1) * 0.16
     const x = floor.x + swayOffset + player.lean * 0.18
-    drawHouseBlock(context, x, floor.y, floor.width, floor.height, floor.color)
+    drawHouseBlock(context, x, floor.y, floor.width, floor.height, floor.color, false, floor.imageIndex)
   })
-
-  context.fillStyle = '#4f3d31'
-  context.font = '700 20px "Segoe UI"'
-  context.textAlign = 'center'
-  context.fillText(`${player.name} ${player.floors.length} 層`, player.towerX, HEIGHT - 26)
-  context.fillText(`失誤 ${player.misses}/${MAX_MISSES}`, player.towerX, HEIGHT - 2)
-  context.textAlign = 'start'
 
   if (player.floors.length === 0) {
     context.strokeStyle = 'rgba(79, 61, 49, 0.25)'
     context.setLineDash([8, 8])
-    context.strokeRect(player.towerX - BLOCK_WIDTH / 2, HEIGHT - 70 - BLOCK_HEIGHT, BLOCK_WIDTH, BLOCK_HEIGHT)
+    context.strokeRect(player.towerX - BLOCK_WIDTH / 2, TOWER_BASE_Y - BLOCK_HEIGHT, BLOCK_WIDTH, BLOCK_HEIGHT)
     context.setLineDash([])
   }
 }
@@ -537,53 +605,50 @@ function drawFallingBlock(context, player) {
   const block = player.fallingBlock
   if (!block) return
 
-  drawHouseBlock(context, block.x, block.y, block.width, block.height, block.color, true)
+  drawHouseBlock(context, block.x, block.y, block.width, block.height, block.color, true, block.imageIndex)
 }
 
-function drawHouseBlock(context, x, y, width, height, color, highlight = false) {
-  context.fillStyle = color
-  context.fillRect(x, y, width, height)
-
-  context.fillStyle = 'rgba(255, 248, 210, 0.92)'
-  for (let row = 0; row < 2; row += 1) {
-    for (let column = 0; column < 4; column += 1) {
-      context.fillRect(x + 15 + column * 24, y + 12 + row * 20, 12, 12)
-    }
+function drawHouseBlock(context, x, y, width, height, color, highlight = false, imageIndex = 0) {
+  const image = floorImages.value[imageIndex]
+  if (image) {
+    context.drawImage(image, x, y, width, height)
+  } else {
+    context.fillStyle = color
+    context.fillRect(x, y, width, height)
   }
 
-  context.fillStyle = 'rgba(75, 54, 39, 0.18)'
-  context.fillRect(x, y + height - 6, width, 6)
-  context.fillStyle = 'rgba(255,255,255,0.25)'
-  context.fillRect(x, y + 4, width, 5)
-
   if (highlight) {
-    context.strokeStyle = 'rgba(255,255,255,0.8)'
+    context.strokeStyle = 'rgba(255, 255, 255, 0.8)'
     context.lineWidth = 2
     context.strokeRect(x + 2, y + 2, width - 4, height - 4)
   }
 }
 
-function drawParticles(context) {
-  state.particles.forEach((particle) => {
-    context.globalAlpha = Math.max(0, particle.life * 1.8)
-    context.fillStyle = particle.color
-    context.fillRect(particle.x, particle.y, 5, 5)
-    context.globalAlpha = 1
-  })
+function drawParticles(context, player) {
+  state.particles
+    .filter((particle) => particle.ownerIndex === player.index)
+    .forEach((particle) => {
+      context.globalAlpha = Math.max(0, particle.life * 1.8)
+      context.fillStyle = particle.color
+      context.fillRect(particle.x, particle.y, 5, 5)
+      context.globalAlpha = 1
+    })
 }
 
 function drawHud(context) {
-  context.fillStyle = 'rgba(255, 252, 246, 0.82)'
-  context.fillRect(24, 22, WIDTH - 48, 96)
+  state.players.forEach((player, index) => {
+    const viewportX = index * VIEW_WIDTH
+    context.fillStyle = 'rgba(255, 252, 246, 0.82)'
+    context.fillRect(viewportX + 18, 20, VIEW_WIDTH - 36, 78)
 
-  context.fillStyle = '#4f3d31'
-  context.font = '700 21px "Segoe UI"'
-  context.fillText(`玩家 1：${playerStatus(state.players[0])}`, 44, 56)
-  context.fillText(`玩家 2：${playerStatus(state.players[1])}`, 44, 88)
+    context.fillStyle = '#4f3d31'
+    context.font = '700 19px "Segoe UI"'
+    context.fillText(`玩家 ${index + 1}：${playerStatus(player)}`, viewportX + 34, 52)
 
-  context.fillStyle = '#8a684d'
-  context.font = '600 18px "Segoe UI"'
-  context.fillText(`風速：${windLabel.value}`, WIDTH - 190, 56)
+    context.fillStyle = '#8a684d'
+    context.font = '600 16px "Segoe UI"'
+    context.fillText(`風速：${windLabel.value} / 視角依樓高調整`, viewportX + 34, 78)
+  })
 }
 
 function drawOverlay(context, title, subtitle) {
@@ -601,7 +666,7 @@ function drawOverlay(context, title, subtitle) {
   context.font = '600 22px "Segoe UI"'
   context.fillText(subtitle, WIDTH / 2, 398)
   context.font = '500 18px "Segoe UI"'
-  context.fillText('玩家 1：F 釋放 ｜ 玩家 2：L 釋放 ｜ 兩人可以同步遊玩', WIDTH / 2, 438)
+  context.fillText('玩家 1：F 釋放 / 玩家 2：L 釋放 / 兩位玩家可同步遊玩', WIDTH / 2, 438)
   context.textAlign = 'start'
 }
 
@@ -641,7 +706,10 @@ function setupTestingHooks() {
       floors: player.floors.length,
       misses: player.misses,
       falling: Boolean(player.fallingBlock),
-      lean: Number(player.lean.toFixed(2))
+      lean: Number(player.lean.toFixed(2)),
+      cameraY: Number(getPlayerCameraY(player).toFixed(2)),
+      craneY: Number(getCraneY(player).toFixed(2)),
+      towerTop: Number(getTowerTop(player).toFixed(2))
     }))
   })
 
@@ -759,10 +827,14 @@ h1 {
 }
 
 .controls-grid,
-.status-grid {
+.status-grid,
+.actions {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.75rem;
+}
+
+.controls-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .controls-grid div,
@@ -770,15 +842,9 @@ h1 {
 .record-card {
   display: grid;
   gap: 0.25rem;
-  padding: 0.9rem 1rem;
+  padding: 0.8rem;
   border-radius: 18px;
-  background: rgba(247, 240, 226, 0.82);
-}
-
-.controls-grid strong,
-.status-grid strong,
-.record-card strong {
-  color: #5a4537;
+  background: rgba(255, 245, 225, 0.72);
 }
 
 .controls-grid span,
@@ -786,54 +852,48 @@ h1 {
 .record-card span,
 .record-card p,
 .empty-text {
-  color: #715f51;
+  color: #7c6858;
+  font-size: 0.9rem;
 }
 
 .actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.7rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 button {
   border: 0;
   border-radius: 999px;
-  padding: 0.8rem 1.15rem;
-  background: #f3e6d5;
-  color: #765941;
-  font-weight: 700;
+  padding: 0.85rem 1rem;
+  background: #fff3df;
+  color: #6a4e3b;
+  font-weight: 800;
   cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(118, 89, 68, 0.14);
 }
 
 button.primary {
-  background: linear-gradient(135deg, #f2b980, #eb9388);
-  color: #fff9f2;
+  background: linear-gradient(135deg, #f3a65d, #ef7d62);
+  color: #fff;
+  box-shadow: 0 14px 28px rgba(204, 112, 70, 0.24);
 }
 
 .record-list {
   display: grid;
-  gap: 0.7rem;
+  gap: 0.75rem;
+  max-height: 300px;
+  overflow: auto;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1120px) {
   .layout {
     grid-template-columns: 1fr;
   }
-
-  .stage-frame {
-    min-height: min(70vh, 760px);
-  }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 640px) {
   .controls-grid,
-  .status-grid {
+  .actions {
     grid-template-columns: 1fr;
-  }
-
-  .game03-view {
-    width: min(100%, calc(100% - 0.75rem));
-    padding: 0.8rem 0 1.5rem;
   }
 }
 </style>

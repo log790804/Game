@@ -11,3 +11,7 @@ Original prompt: 我有一個game02的構想 是射擊遊戲,如<STRIKERS1945> �
 - 2026-04-07: Reworked game03 to Tower Bloxx-style crane release gameplay: swinging crane, falling blocks, landing judgment, wind drift, tower sway, and two-player turns.
 - 2026-04-07: Updated game03 to simultaneous two-player crane play and improved UI blocks into house-like modules with roofs/windows/city background.
 - 2026-04-07: Removed roof shape from game03 building blocks and increased each floor height for clearer apartment-like stacking.
+- 2026-04-07: Generated 10 square PNG building floor assets and wired game03 to draw tower blocks from them.
+- 2026-04-07: Reworked game03 display into left/right split view with per-player camera tracking so each crane stays a fixed distance above that player's tower top.
+- 2026-04-07: Tuned game03 camera tracking to keep the foundation fixed at the start and only follow once the crane nears the top of the visible play area.
+- 2026-04-07: Translated game03 visible UI and canvas text from English back to Traditional Chinese.
