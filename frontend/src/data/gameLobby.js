@@ -23,6 +23,12 @@ const games = {
     subtitle: '已開放遊玩',
     description: '雙人輪流疊高樓，最多失誤五次；樓層越高，風速與傾斜造成的搖晃越明顯。',
     route: '/game03'
+  },
+  3: {
+    title: '雙人分割賽車',
+    subtitle: '已開放遊玩',
+    description: '左右畫面切開成兩位玩家各自的賽道視角，直接用鍵盤衝刺，比誰先完成三圈。',
+    route: '/game04'
   }
 }
 
