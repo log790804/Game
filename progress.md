@@ -16,3 +16,4 @@ Original prompt: 我有一個game02的構想 是射擊遊戲,如<STRIKERS1945> �
 - 2026-04-07: Tuned game03 camera tracking to keep the foundation fixed at the start and only follow once the crane nears the top of the visible play area.
 - 2026-04-07: Translated game03 visible UI and canvas text from English back to Traditional Chinese.
 - 2026-05-12: Added game04 as a split-screen two-player racing MVP with keyboard controls, local records, and lobby/router entry.
+- 2026-05-12: Rebuilt game04 into a split-screen pseudo-3D racer with curved road segments, obstacles, player-vs-player collisions, third-person camera, and one-lap finish logic.
