@@ -106,6 +106,7 @@ import Game01Board from './components/Game01Board.vue'
 import Game01ScorePanel from './components/Game01ScorePanel.vue'
 import Game01SettingsPanel from './components/Game01SettingsPanel.vue'
 import { appendGame01Record, clearGame01Records, fetchGame01Store, resetGame01, saveGame01State } from './game01Api'
+import { recordGameResult } from '@/data/lobbyScore'
 import { BOARD_SIZE_OPTIONS, DEFAULT_BACK_IMAGE, createDefaultFrontImages, normalizeImageList } from './game01Defaults'
 
 const ui = reactive({
@@ -349,6 +350,16 @@ async function commitFinishedRecord() {
     return
   }
 
+  const [lobbyFirst, lobbySecond] = gameState.players
+  recordGameResult(
+    '/game01',
+    lobbyFirst.score === lobbySecond.score
+      ? 'draw'
+      : lobbyFirst.score > lobbySecond.score
+        ? 'p1'
+        : 'p2'
+  )
+
   try {
     const store = await appendGame01Record({
       sessionId: gameState.sessionId,
@@ -466,11 +477,23 @@ function wait(duration) {
 
 <style scoped>
 .game01-view {
+  position: relative;
+  min-height: 100vh;
   width: min(1360px, calc(100% - 2rem));
   margin: 0 auto;
   display: grid;
   gap: 1.5rem;
   padding: 1.5rem 0 2.5rem;
+  color: #e9e6ff;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.game01-view::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(circle at 20% 0%, #241d44, #0b0a18 60%);
 }
 
 .topbar {
@@ -486,25 +509,34 @@ function wait(duration) {
   align-items: center;
   padding: 0.8rem 1rem;
   border-radius: 999px;
-  background: rgba(255, 252, 246, 0.88);
-  border: 1px solid rgba(136, 106, 83, 0.12);
-  box-shadow: 0 18px 36px rgba(112, 89, 68, 0.08);
-  color: #715746;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(179, 155, 255, 0.3);
+  color: #c7bcf0;
   font-weight: 700;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.back-link:hover {
+  background: rgba(179, 155, 255, 0.14);
+  color: #fff;
 }
 
 .eyebrow {
-  color: #9f7c61;
+  color: #e7c66b;
   font-size: 0.82rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
 h1 {
   margin-top: 0.3rem;
-  color: #4e3d31;
   font-size: clamp(2.2rem, 4vw, 3.2rem);
+  background: linear-gradient(90deg, #e7c66b, #b39bff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .layout {
@@ -522,10 +554,10 @@ h1 {
 
 .records-panel {
   padding: 1.4rem;
-  border-radius: 28px;
-  background: rgba(255, 252, 246, 0.88);
-  border: 1px solid rgba(136, 106, 83, 0.12);
-  box-shadow: 0 18px 36px rgba(112, 89, 68, 0.1);
+  border-radius: 24px;
+  background: rgba(18, 16, 34, 0.62);
+  border: 1px solid rgba(150, 130, 220, 0.18);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
 }
 
 .records-heading {
@@ -538,11 +570,11 @@ h1 {
 
 .records-heading h2 {
   margin-top: 0.35rem;
-  color: #4f3d31;
+  color: #e9e6ff;
 }
 
 .records-heading span {
-  color: #8e7158;
+  color: #e7c66b;
   font-weight: 700;
 }
 
@@ -556,26 +588,30 @@ h1 {
   display: grid;
   gap: 0.2rem;
   padding: 1rem 1.1rem;
-  border-radius: 20px;
-  background: rgba(250, 242, 230, 0.74);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(150, 130, 220, 0.12);
 }
 
 .record-card strong {
-  color: #5d4737;
+  color: #e7c66b;
 }
 
 .record-card span,
-.record-card p,
-.empty-text,
-.error-banner {
-  color: #6d5d50;
+.record-card p {
+  color: #b3acd6;
+}
+
+.empty-text {
+  color: #7d76a8;
 }
 
 .error-banner {
   padding: 1rem 1.2rem;
   border-radius: 18px;
-  background: rgba(255, 236, 232, 0.9);
-  border: 1px solid rgba(220, 132, 110, 0.2);
+  background: rgba(220, 90, 90, 0.14);
+  border: 1px solid rgba(255, 120, 120, 0.3);
+  color: #ffc9c9;
 }
 
 .empty-text {

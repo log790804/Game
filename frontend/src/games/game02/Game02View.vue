@@ -115,6 +115,7 @@
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { clearGame02Records, fetchGame02Store, saveGame02Record } from './game02Storage'
+import { recordGameResult } from '@/data/lobbyScore'
 
 const canvasRef = ref(null)
 const stageRef = ref(null)
@@ -546,6 +547,15 @@ function finishGame() {
     state.winner = playerOne.score > playerTwo.score ? `${playerOne.name} 勝利` : `${playerTwo.name} 勝利`
   }
 
+  recordGameResult(
+    '/game02',
+    playerOne.score === playerTwo.score
+      ? 'draw'
+      : playerOne.score > playerTwo.score
+        ? 'p1'
+        : 'p2'
+  )
+
   saveRecord()
 }
 
@@ -830,11 +840,23 @@ function distanceBetween(ax, ay, bx, by) {
 
 <style scoped>
 .game02-view {
+  position: relative;
+  min-height: 100vh;
   width: min(1400px, calc(100% - 1rem));
   margin: 0 auto;
   display: grid;
   gap: 1.2rem;
   padding: 1rem 0 2rem;
+  color: #e6f0ff;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.game02-view::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(circle at 50% -10%, #12305a, #060e1c 60%);
 }
 
 .topbar {
@@ -850,25 +872,34 @@ function distanceBetween(ax, ay, bx, by) {
   align-items: center;
   padding: 0.8rem 1rem;
   border-radius: 999px;
-  background: rgba(255, 252, 246, 0.88);
-  border: 1px solid rgba(136, 106, 83, 0.12);
-  box-shadow: 0 18px 36px rgba(112, 89, 68, 0.08);
-  color: #715746;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(123, 198, 255, 0.3);
+  color: #9fc6f0;
   font-weight: 700;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.back-link:hover {
+  background: rgba(123, 198, 255, 0.14);
+  color: #fff;
 }
 
 .eyebrow {
-  color: #9f7c61;
+  color: #7bc6ff;
   font-size: 0.82rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
 h1 {
   margin-top: 0.3rem;
-  color: #4e3d31;
   font-size: clamp(2rem, 4vw, 3rem);
+  background: linear-gradient(90deg, #7bc6ff, #ffb36b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .layout {
@@ -880,10 +911,10 @@ h1 {
 
 .stage-card,
 .panel {
-  border-radius: 28px;
-  background: rgba(255, 252, 246, 0.9);
-  border: 1px solid rgba(137, 110, 89, 0.12);
-  box-shadow: 0 18px 36px rgba(112, 89, 68, 0.12);
+  border-radius: 20px;
+  background: rgba(8, 16, 30, 0.6);
+  border: 1px solid rgba(120, 160, 220, 0.18);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
 }
 
 .stage-card {
@@ -901,7 +932,7 @@ h1 {
   display: block;
   max-width: 100%;
   max-height: min(78vh, 960px);
-  border-radius: 22px;
+  border-radius: 14px;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
@@ -917,11 +948,11 @@ h1 {
 }
 
 .panel h2 {
-  color: #4b392e;
+  color: #e6f0ff;
 }
 
 .panel p {
-  color: #6c5e52;
+  color: #9fb6dc;
 }
 
 .controls-grid,
@@ -937,14 +968,15 @@ h1 {
   display: grid;
   gap: 0.25rem;
   padding: 0.9rem 1rem;
-  border-radius: 18px;
-  background: rgba(247, 240, 226, 0.82);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(120, 160, 220, 0.12);
 }
 
 .controls-grid strong,
 .status-grid strong,
 .record-card strong {
-  color: #5a4537;
+  color: #ffb36b;
 }
 
 .controls-grid span,
@@ -952,7 +984,7 @@ h1 {
 .record-card span,
 .record-card p,
 .empty-text {
-  color: #715f51;
+  color: #9fb6dc;
 }
 
 .actions {
@@ -965,15 +997,15 @@ button {
   border: 0;
   border-radius: 999px;
   padding: 0.8rem 1.15rem;
-  background: #f3e6d5;
-  color: #765941;
+  background: rgba(255, 255, 255, 0.08);
+  color: #9fc6f0;
   font-weight: 700;
   cursor: pointer;
 }
 
 button.primary {
-  background: linear-gradient(135deg, #f2b980, #eb9388);
-  color: #fff9f2;
+  background: linear-gradient(135deg, #5fb0ff, #46d0ff);
+  color: #061018;
 }
 
 .record-list {

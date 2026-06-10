@@ -73,21 +73,21 @@ defineEmits(['flip'])
 }
 
 .eyebrow {
-  color: #9a785c;
+  color: #e7c66b;
   font-size: 0.82rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
 h2 {
   margin-top: 0.35rem;
-  color: #4c3a2f;
+  color: #e9e6ff;
 }
 
 .board-heading p:last-child {
   max-width: 28rem;
-  color: #6b5d52;
+  color: #b3acd6;
 }
 
 .game-board {

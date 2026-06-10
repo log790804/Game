@@ -102,10 +102,10 @@ defineEmits([
   display: grid;
   gap: 1.25rem;
   padding: 1.6rem;
-  border-radius: 30px;
-  background: rgba(255, 252, 246, 0.88);
-  border: 1px solid rgba(136, 106, 83, 0.12);
-  box-shadow: 0 18px 36px rgba(112, 89, 68, 0.1);
+  border-radius: 24px;
+  background: rgba(18, 16, 34, 0.62);
+  border: 1px solid rgba(150, 130, 220, 0.18);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
 }
 
 .panel-heading {
@@ -116,21 +116,21 @@ defineEmits([
 }
 
 .eyebrow {
-  color: #a07c60;
+  color: #e7c66b;
   font-size: 0.82rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
 h2 {
   margin-top: 0.35rem;
-  color: #4f3d31;
+  color: #e9e6ff;
 }
 
 .panel-heading p {
   max-width: 28rem;
-  color: #6f6154;
+  color: #b3acd6;
 }
 
 .settings-grid {
@@ -149,7 +149,7 @@ h2 {
 }
 
 .field span {
-  color: #7e6350;
+  color: #c7bcf0;
   font-size: 0.92rem;
   font-weight: 700;
 }
@@ -158,11 +158,18 @@ select,
 input,
 textarea {
   width: 100%;
-  border: 1px solid rgba(135, 106, 84, 0.18);
-  border-radius: 18px;
+  border: 1px solid rgba(150, 130, 220, 0.25);
+  border-radius: 14px;
   padding: 0.85rem 1rem;
-  background: #fffdf8;
-  color: #4d3a2e;
+  background: rgba(255, 255, 255, 0.05);
+  color: #e9e6ff;
+}
+
+select:focus,
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: rgba(231, 198, 107, 0.6);
 }
 
 textarea {
@@ -179,14 +186,15 @@ button {
   border: 0;
   border-radius: 999px;
   padding: 0.8rem 1.15rem;
-  background: #f3e6d5;
-  color: #765941;
+  background: rgba(255, 255, 255, 0.08);
+  color: #c7bcf0;
   font-weight: 700;
+  cursor: pointer;
 }
 
 button.primary {
-  background: linear-gradient(135deg, #f2b980, #eb9388);
-  color: #fff9f2;
+  background: linear-gradient(135deg, #e7c66b, #b39bff);
+  color: #1a1530;
 }
 
 button:disabled,

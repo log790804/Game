@@ -1,5 +1,6 @@
 <template>
   <main class="home-view">
+    <HomeTechBackground />
     <HomePageHeader />
     <HomePageContent />
     <HomePageFooter />
@@ -7,6 +8,7 @@
 </template>
 
 <script setup>
+import HomeTechBackground from '@/components/home/HomeTechBackground.vue'
 import HomePageHeader from '@/components/home/HomePageHeader.vue'
 import HomePageContent from '@/components/home/HomePageContent.vue'
 import HomePageFooter from '@/components/home/HomePageFooter.vue'
@@ -14,10 +16,16 @@ import HomePageFooter from '@/components/home/HomePageFooter.vue'
 
 <style scoped>
 .home-view {
+  position: relative;
+  min-height: 100vh;
   width: min(1240px, calc(100% - 2rem));
   margin: 0 auto;
   display: grid;
   gap: 1.5rem;
-  padding: 1.5rem 0 2.5rem;
+  padding: 1.75rem 0 2.5rem;
+  color: #e9e6ff;
+  font-family: 'Segoe UI', system-ui, sans-serif;
 }
+
+/* animated tech background lives in HomeTechBackground.vue (fixed canvas, z-index -1) */
 </style>

@@ -128,6 +128,7 @@
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { clearGame03Records, fetchGame03Store, saveGame03Record } from './game03Storage'
+import { recordGameResult } from '@/data/lobbyScore'
 
 const FLOOR_IMAGE_URLS = [
   new URL('./assets/floors/floor-01.png', import.meta.url).href,
@@ -358,6 +359,15 @@ function finishGame() {
   } else {
     state.winner = playerOne.floors.length > playerTwo.floors.length ? '玩家 1 勝利' : '玩家 2 勝利'
   }
+
+  recordGameResult(
+    '/game03',
+    playerOne.floors.length === playerTwo.floors.length
+      ? 'draw'
+      : playerOne.floors.length > playerTwo.floors.length
+        ? 'p1'
+        : 'p2'
+  )
 
   saveRecord()
 }
@@ -733,11 +743,23 @@ function clamp(value, min, max) {
 
 <style scoped>
 .game03-view {
+  position: relative;
+  min-height: 100vh;
   width: min(1400px, calc(100% - 1rem));
   margin: 0 auto;
   display: grid;
   gap: 1.2rem;
   padding: 1rem 0 2rem;
+  color: #eaf2ff;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.game03-view::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(circle at 50% -10%, #163a63, #07172b 60%);
 }
 
 .topbar {
@@ -753,25 +775,34 @@ function clamp(value, min, max) {
   align-items: center;
   padding: 0.8rem 1rem;
   border-radius: 999px;
-  background: rgba(255, 252, 246, 0.88);
-  border: 1px solid rgba(136, 106, 83, 0.12);
-  box-shadow: 0 18px 36px rgba(112, 89, 68, 0.08);
-  color: #715746;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(111, 183, 255, 0.3);
+  color: #9cc5f0;
   font-weight: 700;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.back-link:hover {
+  background: rgba(111, 183, 255, 0.14);
+  color: #fff;
 }
 
 .eyebrow {
-  color: #9f7c61;
+  color: #ffd36f;
   font-size: 0.82rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
 h1 {
   margin-top: 0.3rem;
-  color: #4e3d31;
   font-size: clamp(2rem, 4vw, 3rem);
+  background: linear-gradient(90deg, #ffd36f, #6fb7ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .layout {
@@ -783,10 +814,10 @@ h1 {
 
 .stage-card,
 .panel {
-  border-radius: 28px;
-  background: rgba(255, 252, 246, 0.9);
-  border: 1px solid rgba(137, 110, 89, 0.12);
-  box-shadow: 0 18px 36px rgba(112, 89, 68, 0.12);
+  border-radius: 20px;
+  background: rgba(8, 20, 38, 0.6);
+  border: 1px solid rgba(111, 160, 220, 0.18);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
 }
 
 .stage-card {
@@ -804,7 +835,7 @@ h1 {
   display: block;
   max-width: 100%;
   max-height: min(78vh, 760px);
-  border-radius: 22px;
+  border-radius: 14px;
 }
 
 .sidebar {
@@ -819,11 +850,11 @@ h1 {
 }
 
 .panel h2 {
-  color: #4b392e;
+  color: #eaf2ff;
 }
 
 .panel p {
-  color: #6c5e52;
+  color: #9fb6dc;
 }
 
 .controls-grid,
@@ -843,8 +874,15 @@ h1 {
   display: grid;
   gap: 0.25rem;
   padding: 0.8rem;
-  border-radius: 18px;
-  background: rgba(255, 245, 225, 0.72);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(111, 160, 220, 0.12);
+}
+
+.controls-grid strong,
+.status-grid strong,
+.record-card strong {
+  color: #ffd36f;
 }
 
 .controls-grid span,
@@ -852,7 +890,7 @@ h1 {
 .record-card span,
 .record-card p,
 .empty-text {
-  color: #7c6858;
+  color: #9fb6dc;
   font-size: 0.9rem;
 }
 
@@ -864,17 +902,16 @@ button {
   border: 0;
   border-radius: 999px;
   padding: 0.85rem 1rem;
-  background: #fff3df;
-  color: #6a4e3b;
+  background: rgba(255, 255, 255, 0.08);
+  color: #9cc5f0;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: inset 0 0 0 1px rgba(118, 89, 68, 0.14);
 }
 
 button.primary {
-  background: linear-gradient(135deg, #f3a65d, #ef7d62);
-  color: #fff;
-  box-shadow: 0 14px 28px rgba(204, 112, 70, 0.24);
+  background: linear-gradient(135deg, #ffd36f, #6fb7ff);
+  color: #0a1c30;
+  box-shadow: 0 14px 28px rgba(111, 183, 255, 0.24);
 }
 
 .record-list {

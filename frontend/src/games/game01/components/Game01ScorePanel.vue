@@ -57,10 +57,10 @@ defineProps({
 .status-card,
 .player-card,
 .summary-grid {
-  border-radius: 26px;
-  background: rgba(255, 252, 246, 0.88);
-  border: 1px solid rgba(136, 106, 83, 0.12);
-  box-shadow: 0 18px 36px rgba(112, 89, 68, 0.1);
+  border-radius: 22px;
+  background: rgba(18, 16, 34, 0.62);
+  border: 1px solid rgba(150, 130, 220, 0.18);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
 }
 
 .status-card {
@@ -68,21 +68,21 @@ defineProps({
 }
 
 .eyebrow {
-  color: #9a7759;
+  color: #e7c66b;
   font-size: 0.82rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
 h2 {
   margin-top: 0.35rem;
-  color: #4f3d31;
+  color: #e9e6ff;
 }
 
 .status-card p:last-child {
   margin-top: 0.65rem;
-  color: #6d5f54;
+  color: #b3acd6;
 }
 
 .players {
@@ -98,18 +98,18 @@ h2 {
 }
 
 .player-card span {
-  color: #8e6c52;
+  color: #b39bff;
   font-weight: 700;
 }
 
 .player-card strong {
-  color: #4d3a2f;
+  color: #e9e6ff;
   font-size: 1.4rem;
 }
 
 .player-card.active {
-  background: linear-gradient(135deg, rgba(255, 234, 214, 0.95), rgba(255, 248, 240, 0.96));
-  border-color: rgba(226, 151, 117, 0.28);
+  background: linear-gradient(135deg, rgba(231, 198, 107, 0.18), rgba(179, 155, 255, 0.16));
+  border-color: rgba(231, 198, 107, 0.4);
 }
 
 .summary-grid {
@@ -125,12 +125,12 @@ h2 {
 }
 
 .summary-grid span {
-  color: #8b6d57;
+  color: #8f88bb;
   font-size: 0.85rem;
 }
 
 .summary-grid strong {
-  color: #4d3a2f;
+  color: #e9e6ff;
   font-size: 1.2rem;
 }
 
