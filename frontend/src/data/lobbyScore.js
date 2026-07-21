@@ -1,6 +1,8 @@
 // 大廳賽事計分：一大輪內每款遊戲只計一次，累計兩隊勝場，
 // 直到點擊重置才歸零並解鎖所有遊戲。
 
+import { fetchGameStore, writeGameStore } from '@/services/gameStoreRepository'
+
 const STORAGE_KEY = 'lobbyScore.json'
 
 // 目前可玩、且納入一大輪計分的遊戲路由
@@ -36,6 +38,25 @@ function createDefaultStore() {
   }
 }
 
+function normalizeLobbyStore(store) {
+  const results = {}
+  if (store?.results && typeof store.results === 'object') {
+    for (const route of PLAYABLE_ROUTES) {
+      const value = store.results[route]
+      if (VALID_TEAMS.includes(value)) results[route] = value
+    }
+  }
+
+  return {
+    results,
+    updatedAt: store?.updatedAt ?? new Date().toISOString()
+  }
+}
+
+const storeOptions = {
+  normalize: normalizeLobbyStore
+}
+
 function getStorage() {
   if (typeof window === 'undefined' || !window.localStorage) {
     throw new Error('localStorage is unavailable')
@@ -43,7 +64,7 @@ function getStorage() {
   return window.localStorage
 }
 
-function readStore() {
+function readLocalStore() {
   let storage
   try {
     storage = getStorage()
@@ -59,18 +80,7 @@ function readStore() {
   }
 
   try {
-    const parsed = JSON.parse(raw)
-    const results = {}
-    if (parsed.results && typeof parsed.results === 'object') {
-      for (const route of PLAYABLE_ROUTES) {
-        const v = parsed.results[route]
-        if (VALID_TEAMS.includes(v)) results[route] = v
-      }
-    }
-    return {
-      results,
-      updatedAt: parsed.updatedAt ?? new Date().toISOString()
-    }
+    return normalizeLobbyStore(JSON.parse(raw))
   } catch {
     const store = createDefaultStore()
     storage.setItem(STORAGE_KEY, JSON.stringify(store))
@@ -78,11 +88,11 @@ function readStore() {
   }
 }
 
-function writeStore(store) {
-  const normalized = {
-    results: store.results ?? {},
+function writeLocalStore(store) {
+  const normalized = normalizeLobbyStore({
+    ...store,
     updatedAt: new Date().toISOString()
-  }
+  })
   try {
     getStorage().setItem(STORAGE_KEY, JSON.stringify(normalized))
   } catch {
@@ -91,22 +101,37 @@ function writeStore(store) {
   return normalized
 }
 
-export function fetchLobbyScore() {
-  return readStore()
+export async function fetchLobbyScore() {
+  try {
+    return await fetchGameStore(STORAGE_KEY, storeOptions)
+  } catch (error) {
+    console.warn('Lobby score remote read failed, fallback to localStorage.', error)
+    return readLocalStore()
+  }
 }
 
 // 紀錄一款遊戲的勝方；一大輪內同一款只會記第一次，避免重玩覆寫。
-export function recordGameResult(route, team) {
-  if (!PLAYABLE_ROUTES.includes(route)) return readStore()
-  if (!VALID_TEAMS.includes(team)) return readStore()
-  const store = readStore()
+export async function recordGameResult(route, team) {
+  if (!PLAYABLE_ROUTES.includes(route)) return readLocalStore()
+  if (!VALID_TEAMS.includes(team)) return readLocalStore()
+  const store = await fetchLobbyScore()
   if (store.results[route]) return store
   store.results[route] = team
-  return writeStore(store)
+  try {
+    return await writeGameStore(STORAGE_KEY, store, storeOptions)
+  } catch (error) {
+    console.warn('Lobby score remote write failed, saved to localStorage only.', error)
+    return writeLocalStore(store)
+  }
 }
 
-export function resetLobbyScore() {
-  return writeStore(createDefaultStore())
+export async function resetLobbyScore() {
+  try {
+    return await writeGameStore(STORAGE_KEY, createDefaultStore(), storeOptions)
+  } catch (error) {
+    console.warn('Lobby score remote reset failed, saved to localStorage only.', error)
+    return writeLocalStore(createDefaultStore())
+  }
 }
 
 // 從 store 推導出兩隊勝場、完成進度與最終勝方。

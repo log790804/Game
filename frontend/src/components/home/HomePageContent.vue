@@ -16,8 +16,8 @@ const victoryDismissed = ref(false)
 const summary = computed(() => summarizeLobby(lobbyStore.value))
 const showVictory = computed(() => summary.value.finished && !victoryDismissed.value)
 
-function reload() {
-  lobbyStore.value = fetchLobbyScore()
+async function reload() {
+  lobbyStore.value = await fetchLobbyScore()
 }
 
 function resultFor(route) {
@@ -44,12 +44,12 @@ const homeImages = {
   cardFrame: `url("${assetUrl('/assets/HOME/ui-game-card-frame.png')}")`
 }
 
-function handleReset() {
+async function handleReset() {
   if (typeof window !== 'undefined') {
     const ok = window.confirm('確定要重置本輪比分嗎？兩隊勝場會歸零，所有遊戲重新解鎖。')
     if (!ok) return
   }
-  lobbyStore.value = resetLobbyScore()
+  lobbyStore.value = await resetLobbyScore()
   victoryDismissed.value = false
 }
 

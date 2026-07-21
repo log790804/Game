@@ -11,6 +11,10 @@ function createBaseStore() {
 }
 
 function normalizeStore(store, options = {}) {
+  if (typeof options.normalize === 'function') {
+    return options.normalize(store)
+  }
+
   const recordLimit = options.recordLimit ?? 10
   const normalized = {
     records: Array.isArray(store?.records) ? store.records.slice(0, recordLimit) : [],
