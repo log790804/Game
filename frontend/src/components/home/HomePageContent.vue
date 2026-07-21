@@ -8,6 +8,7 @@ import {
   summarizeLobby
 } from '@/data/lobbyScore'
 import VictoryCelebration from '@/components/home/VictoryCelebration.vue'
+import { assetUrl } from '@/utils/assetUrl'
 
 const lobbyStore = ref({ results: {} })
 const victoryDismissed = ref(false)
@@ -32,7 +33,15 @@ function resultLabel(team) {
 }
 
 function coverFor(no) {
-  return `/assets/HOME/covers/cover-G${no}.png`
+  return assetUrl(`/assets/HOME/covers/cover-G${no}.png`)
+}
+
+const homeImages = {
+  vsBadge: assetUrl('/assets/HOME/deco/vs-badge.png'),
+  hoverGlow: assetUrl('/assets/HOME/fx-card-hover-glow.png'),
+  pendingBadge: assetUrl('/assets/HOME/badge-pending.png'),
+  enterButton: assetUrl('/assets/HOME/btn-enter-pixel.png'),
+  cardFrame: `url("${assetUrl('/assets/HOME/ui-game-card-frame.png')}")`
 }
 
 function handleReset() {
@@ -74,7 +83,7 @@ onMounted(reload)
       <div class="score-center">
         <img
           class="vs-badge"
-          src="/assets/HOME/deco/vs-badge.png"
+          :src="homeImages.vsBadge"
           alt="VS"
         >
         <div class="progress-text">{{ summary.played }} / {{ summary.total }} CLEARED</div>
@@ -113,11 +122,11 @@ onMounted(reload)
         :key="card.id"
         class="game-card"
         :class="{ done: resultFor(card.route) }"
-        :style="{ '--i': index }"
+        :style="{ '--i': index, '--card-frame': homeImages.cardFrame }"
       >
         <img
           class="hover-glow"
-          src="/assets/HOME/fx-card-hover-glow.png"
+          :src="homeImages.hoverGlow"
           alt=""
           aria-hidden="true"
         >
@@ -133,7 +142,7 @@ onMounted(reload)
           <img
             v-if="!resultFor(card.route)"
             class="badge-pending"
-            src="/assets/HOME/badge-pending.png"
+            :src="homeImages.pendingBadge"
             alt="待挑戰"
           >
           <span
@@ -163,7 +172,7 @@ onMounted(reload)
             :aria-label="`進入 ${card.title}`"
           >
             <img
-              src="/assets/HOME/btn-enter-pixel.png"
+              :src="homeImages.enterButton"
               alt="PLAY"
             >
           </RouterLink>
@@ -356,7 +365,7 @@ onMounted(reload)
   padding: 16px;
   background: var(--cream);
   border: 16px solid transparent;
-  border-image-source: url('/assets/HOME/ui-game-card-frame.png');
+  border-image-source: var(--card-frame);
   border-image-slice: 20 fill;
   border-image-width: 16px;
   border-image-repeat: stretch;

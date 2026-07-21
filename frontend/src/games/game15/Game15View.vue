@@ -98,6 +98,7 @@
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { clearGame15Records, fetchGame15Store, saveGame15Record } from './game15Storage'
 import { recordGameResult } from '@/data/lobbyScore'
+import { assetUrl } from '@/utils/assetUrl'
 
 const CANVAS_W = 920
 const CANVAS_H = 600
@@ -111,7 +112,7 @@ const G15 = {}
 function g15Sprite(name) {
   if (!G15[name]) {
     const img = new Image()
-    img.src = `/assets/G15/${name}.png`
+    img.src = assetUrl(`/assets/G15/${name}.png`)
     G15[name] = img
   }
   return G15[name]

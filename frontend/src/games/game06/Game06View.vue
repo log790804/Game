@@ -172,6 +172,7 @@ import {
   saveGame06Record
 } from './game06Storage'
 import { recordGameResult } from '@/data/lobbyScore'
+import { assetUrl } from '@/utils/assetUrl'
 
 const CANVAS_W = 960
 const CANVAS_H = 660
@@ -195,7 +196,7 @@ const G06 = {}
 function g06Sprite(name) {
   if (!G06[name]) {
     const img = new Image()
-    img.src = `/assets/G06/${name}.png`
+    img.src = assetUrl(`/assets/G06/${name}.png`)
     G06[name] = img
   }
   return G06[name]

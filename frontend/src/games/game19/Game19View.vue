@@ -100,6 +100,7 @@
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { clearGame19Records, fetchGame19Store, saveGame19Record } from './game19Storage'
 import { recordGameResult } from '@/data/lobbyScore'
+import { assetUrl } from '@/utils/assetUrl'
 
 const CANVAS_W = 880
 const CANVAS_H = 540
@@ -116,7 +117,7 @@ const G19 = {}
 function g19Sprite(name) {
   if (!G19[name]) {
     const img = new Image()
-    img.src = `/assets/G19/${name}.png`
+    img.src = assetUrl(`/assets/G19/${name}.png`)
     G19[name] = img
   }
   return G19[name]

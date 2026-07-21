@@ -2,7 +2,7 @@
   <footer class="lobby-footer">
     <span class="brand">
       <img
-        src="/assets/HOME/deco/joystick.png"
+        :src="joystickImage"
         alt=""
         class="ico"
       >
@@ -11,6 +11,12 @@
     <span class="dim">本機保存比分與紀錄，不會上傳</span>
   </footer>
 </template>
+
+<script setup>
+import { assetUrl } from '@/utils/assetUrl'
+
+const joystickImage = assetUrl('/assets/HOME/deco/joystick.png')
+</script>
 
 <style scoped>
 .lobby-footer {

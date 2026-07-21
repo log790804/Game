@@ -129,23 +129,24 @@ import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { clearGame03Records, fetchGame03Store, saveGame03Record } from './game03Storage'
 import { recordGameResult } from '@/data/lobbyScore'
+import { assetUrl } from '@/utils/assetUrl'
 
 // 像素樓層磚塊（夜晚都市風）
 const FLOOR_IMAGE_URLS = [
-  '/assets/G03/block-floor-a.png',
-  '/assets/G03/block-floor-b.png',
-  '/assets/G03/block-floor-c.png',
-  '/assets/G03/block-floor-d.png',
-  '/assets/G03/block-floor-e.png',
-  '/assets/G03/block-floor-f.png',
-  '/assets/G03/block-floor-glass.png',
-  '/assets/G03/block-floor-neon.png'
+  assetUrl('/assets/G03/block-floor-a.png'),
+  assetUrl('/assets/G03/block-floor-b.png'),
+  assetUrl('/assets/G03/block-floor-c.png'),
+  assetUrl('/assets/G03/block-floor-d.png'),
+  assetUrl('/assets/G03/block-floor-e.png'),
+  assetUrl('/assets/G03/block-floor-f.png'),
+  assetUrl('/assets/G03/block-floor-glass.png'),
+  assetUrl('/assets/G03/block-floor-neon.png')
 ]
 
 const cityBgImage = new Image()
-cityBgImage.src = '/assets/G03/bg-city-night.png'
+cityBgImage.src = assetUrl('/assets/G03/bg-city-night.png')
 const craneHookImage = new Image()
-craneHookImage.src = '/assets/G03/crane-hook.png'
+craneHookImage.src = assetUrl('/assets/G03/crane-hook.png')
 
 const canvasRef = ref(null)
 const stageRef = ref(null)

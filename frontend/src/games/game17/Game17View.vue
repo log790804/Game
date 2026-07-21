@@ -96,6 +96,7 @@
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { clearGame17Records, fetchGame17Store, saveGame17Record } from './game17Storage'
 import { recordGameResult } from '@/data/lobbyScore'
+import { assetUrl } from '@/utils/assetUrl'
 
 const GRID = 13
 const CELL = 30
@@ -106,7 +107,7 @@ const G17 = {}
 function g17Sprite(name) {
   if (!G17[name]) {
     const img = new Image()
-    img.src = `/assets/G17/${name}.png`
+    img.src = assetUrl(`/assets/G17/${name}.png`)
     G17[name] = img
   }
   return G17[name]

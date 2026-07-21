@@ -146,6 +146,7 @@ import {
   saveGame07Record
 } from './game07Storage'
 import { recordGameResult } from '@/data/lobbyScore'
+import { assetUrl } from '@/utils/assetUrl'
 
 const CANVAS_W = 720
 const CANVAS_H = 680
@@ -162,7 +163,7 @@ const G07 = {}
 function g07Sprite(name) {
   if (!G07[name]) {
     const img = new Image()
-    img.src = `/assets/G07/${name}.png`
+    img.src = assetUrl(`/assets/G07/${name}.png`)
     G07[name] = img
   }
   return G07[name]

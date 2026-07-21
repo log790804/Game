@@ -114,6 +114,7 @@
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { clearGame11Records, fetchGame11Store, saveGame11Record } from './game11Storage'
 import { recordGameResult } from '@/data/lobbyScore'
+import { assetUrl } from '@/utils/assetUrl'
 
 const TILE = 40
 const COLS = 23
@@ -131,7 +132,7 @@ const G11 = {}
 function g11Sprite(name) {
   if (!G11[name]) {
     const img = new Image()
-    img.src = `/assets/G11/${name}.png`
+    img.src = assetUrl(`/assets/G11/${name}.png`)
     G11[name] = img
   }
   return G11[name]

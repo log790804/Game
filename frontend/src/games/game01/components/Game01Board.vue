@@ -11,7 +11,7 @@
     <div
       class="game-board"
       :class="{ 'is-shuffling': isShuffling }"
-      :style="{ '--board-columns': boardSize }"
+      :style="boardStyle"
     >
       <button
         v-for="(card, index) in cards"
@@ -52,13 +52,24 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue'
+import { assetUrl } from '@/utils/assetUrl'
+
+const props = defineProps({
   cards: { type: Array, required: true },
   boardSize: { type: Number, required: true },
   backImage: { type: String, required: true },
   disabled: { type: Boolean, default: false },
   isShuffling: { type: Boolean, default: false }
 })
+
+const boardStyle = computed(() => ({
+  '--board-columns': props.boardSize,
+  '--match-glow-1': `url("${assetUrl('/assets/G01/fx-match-glow-1.png')}")`,
+  '--match-glow-2': `url("${assetUrl('/assets/G01/fx-match-glow-2.png')}")`,
+  '--match-glow-3': `url("${assetUrl('/assets/G01/fx-match-glow-3.png')}")`,
+  '--match-glow-4': `url("${assetUrl('/assets/G01/fx-match-glow-4.png')}")`
+}))
 
 defineEmits(['flip'])
 </script>
@@ -158,10 +169,10 @@ h2 {
 }
 
 @keyframes matchGlow {
-  0% { background-image: url('/assets/G01/fx-match-glow-1.png'); opacity: 1; }
-  25% { background-image: url('/assets/G01/fx-match-glow-2.png'); opacity: 1; }
-  50% { background-image: url('/assets/G01/fx-match-glow-3.png'); opacity: 1; }
-  75% { background-image: url('/assets/G01/fx-match-glow-4.png'); opacity: 1; }
+  0% { background-image: var(--match-glow-1); opacity: 1; }
+  25% { background-image: var(--match-glow-2); opacity: 1; }
+  50% { background-image: var(--match-glow-3); opacity: 1; }
+  75% { background-image: var(--match-glow-4); opacity: 1; }
   100% { opacity: 0; }
 }
 

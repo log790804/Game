@@ -1,3 +1,5 @@
+import { assetUrl } from '@/utils/assetUrl'
+
 export const BOARD_SIZE_OPTIONS = [4, 6, 8]
 
 const palettes = [
@@ -31,7 +33,7 @@ function createSvgDataUrl(title, subtitle, from, to, textColor = '#4d3b30') {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`
 }
 
-export const DEFAULT_BACK_IMAGE = '/assets/G01/card-back.png'
+export const DEFAULT_BACK_IMAGE = assetUrl('/assets/G01/card-back.png')
 
 // 8 款像素符文卡面（4x4 盤面剛好 8 對全用像素圖；更大盤面不足的部分以漸層卡補齊）
 const PIXEL_FACES = [
@@ -43,7 +45,7 @@ const PIXEL_FACES = [
   'clover',
   'bolt',
   'paw'
-].map((name) => `/assets/G01/card-face-${name}.png`)
+].map((name) => assetUrl(`/assets/G01/card-face-${name}.png`))
 
 export function createDefaultFrontImages(requiredCount = 32) {
   return Array.from({ length: Math.max(requiredCount, 32) }, (_, index) => {

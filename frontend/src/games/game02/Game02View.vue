@@ -116,6 +116,7 @@ import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { clearGame02Records, fetchGame02Store, saveGame02Record } from './game02Storage'
 import { recordGameResult } from '@/data/lobbyScore'
+import { assetUrl } from '@/utils/assetUrl'
 
 const canvasRef = ref(null)
 const stageRef = ref(null)
@@ -130,7 +131,7 @@ const SPRITES = {}
 function sprite(name) {
   if (!SPRITES[name]) {
     const img = new Image()
-    img.src = `/assets/G02/${name}.png`
+    img.src = assetUrl(`/assets/G02/${name}.png`)
     SPRITES[name] = img
   }
   return SPRITES[name]

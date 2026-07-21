@@ -108,6 +108,7 @@
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { clearGame04Records, fetchGame04Store, saveGame04Record } from './game04Storage'
 import { recordGameResult } from '@/data/lobbyScore'
+import { assetUrl } from '@/utils/assetUrl'
 
 const CANVAS_W = 960
 const CANVAS_H = 620
@@ -165,7 +166,7 @@ const G04 = {}
 function g04Sprite(name) {
   if (!G04[name]) {
     const img = new Image()
-    img.src = `/assets/G04/${name}.png`
+    img.src = assetUrl(`/assets/G04/${name}.png`)
     G04[name] = img
   }
   return G04[name]

@@ -151,6 +151,7 @@ import {
   saveGame10Record
 } from './game10Storage'
 import { recordGameResult } from '@/data/lobbyScore'
+import { assetUrl } from '@/utils/assetUrl'
 
 const COLS = 10
 const ROWS = 20
@@ -189,7 +190,7 @@ const G10 = {}
 function g10Sprite(name) {
   if (!G10[name]) {
     const img = new Image()
-    img.src = `/assets/G10/${name}.png`
+    img.src = assetUrl(`/assets/G10/${name}.png`)
     G10[name] = img
   }
   return G10[name]

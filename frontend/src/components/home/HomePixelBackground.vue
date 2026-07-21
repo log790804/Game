@@ -1,6 +1,7 @@
 <template>
   <div
     class="pixel-bg"
+    :style="backgroundStyle"
     aria-hidden="true"
   >
     <div class="bg-photo" />
@@ -9,34 +10,48 @@
     <!-- 漂浮裝飾 -->
     <img
       class="float float-ufo"
-      src="/assets/HOME/deco/ufo-1.png"
+      :src="images.ufo"
       alt=""
     >
     <img
       class="float float-coin"
-      src="/assets/HOME/deco/coin-1.png"
+      :src="images.coin"
       alt=""
     >
     <img
       class="float float-gem"
-      src="/assets/HOME/deco/gem-pink.png"
+      :src="images.gem"
       alt=""
     >
     <img
       class="float float-star"
-      src="/assets/HOME/deco/star.png"
+      :src="images.star"
       alt=""
     >
     <img
       class="float float-pad"
-      src="/assets/HOME/deco/gamepad.png"
+      :src="images.gamepad"
       alt=""
     >
   </div>
 </template>
 
 <script setup>
+import { assetUrl } from '@/utils/assetUrl'
+
 // 純 CSS 像素背景：日系夜晚遊樂場 + 星點平鋪 + 漂浮裝飾
+const images = {
+  ufo: assetUrl('/assets/HOME/deco/ufo-1.png'),
+  coin: assetUrl('/assets/HOME/deco/coin-1.png'),
+  gem: assetUrl('/assets/HOME/deco/gem-pink.png'),
+  star: assetUrl('/assets/HOME/deco/star.png'),
+  gamepad: assetUrl('/assets/HOME/deco/gamepad.png')
+}
+
+const backgroundStyle = {
+  '--home-bg': `url("${assetUrl('/assets/HOME/home-bg-pixel-arcade.png')}")`,
+  '--home-stars': `url("${assetUrl('/assets/HOME/deco-stars-particles.png')}")`
+}
 </script>
 
 <style scoped>
@@ -51,7 +66,7 @@
 .bg-photo {
   position: absolute;
   inset: 0;
-  background-image: url('/assets/HOME/home-bg-pixel-arcade.png');
+  background-image: var(--home-bg);
   background-size: cover;
   background-position: center top;
   image-rendering: pixelated;
@@ -61,7 +76,7 @@
 .bg-stars {
   position: absolute;
   inset: -256px;
-  background-image: url('/assets/HOME/deco-stars-particles.png');
+  background-image: var(--home-stars);
   background-size: 256px 256px;
   background-repeat: repeat;
   image-rendering: pixelated;

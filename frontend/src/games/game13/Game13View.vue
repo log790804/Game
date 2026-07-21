@@ -1,5 +1,8 @@
 <template>
-  <main class="game13-view">
+  <main
+    class="game13-view"
+    :style="viewStyle"
+  >
     <section class="topbar">
       <RouterLink to="/" class="back-link">← 返回遊戲廳</RouterLink>
       <div class="title-block">
@@ -91,6 +94,11 @@
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { clearGame13Records, fetchGame13Store, saveGame13Record } from './game13Storage'
 import { recordGameResult } from '@/data/lobbyScore'
+import { assetUrl } from '@/utils/assetUrl'
+
+const viewStyle = {
+  '--game13-bg': `url("${assetUrl('/assets/G13/bg-wood-sakura.png')}")`
+}
 
 const N = 15
 const CELL = 36
@@ -102,7 +110,7 @@ const G13 = {}
 function g13Sprite(name) {
   if (!G13[name]) {
     const img = new Image()
-    img.src = `/assets/G13/${name}.png`
+    img.src = assetUrl(`/assets/G13/${name}.png`)
     G13[name] = img
   }
   return G13[name]
@@ -361,7 +369,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.game13-view { min-height: 100vh; padding: 24px clamp(16px,4vw,48px) 48px; color: #efe6d6; background: #2a1d12 url('/assets/G13/bg-wood-sakura.png') center / cover fixed no-repeat; image-rendering: pixelated; font-family: 'Segoe UI', system-ui, sans-serif; }
+.game13-view { min-height: 100vh; padding: 24px clamp(16px,4vw,48px) 48px; color: #efe6d6; background: #2a1d12 var(--game13-bg) center / cover fixed no-repeat; image-rendering: pixelated; font-family: 'Segoe UI', system-ui, sans-serif; }
 .topbar { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 22px; }
 .back-link { color: #cbb084; text-decoration: none; font-size: 14px; padding: 8px 14px; border: 1px solid rgba(203,176,132,0.3); border-radius: 999px; transition: 0.2s; }
 .back-link:hover { background: rgba(203,176,132,0.12); color: #fff; }

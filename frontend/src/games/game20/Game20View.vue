@@ -108,6 +108,7 @@
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { clearGame20Records, fetchGame20Store, saveGame20Record } from './game20Storage'
 import { recordGameResult } from '@/data/lobbyScore'
+import { assetUrl } from '@/utils/assetUrl'
 
 const CANVAS_W = 880
 const CANVAS_H = 460
@@ -120,7 +121,7 @@ const G20 = {}
 function g20Sprite(name) {
   if (!G20[name]) {
     const img = new Image()
-    img.src = `/assets/G20/${name}.png`
+    img.src = assetUrl(`/assets/G20/${name}.png`)
     G20[name] = img
   }
   return G20[name]

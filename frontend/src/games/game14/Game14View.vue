@@ -104,6 +104,7 @@
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { clearGame14Records, fetchGame14Store, saveGame14Record } from './game14Storage'
 import { recordGameResult } from '@/data/lobbyScore'
+import { assetUrl } from '@/utils/assetUrl'
 
 const CANVAS_W = 920
 const CANVAS_H = 640
@@ -125,7 +126,7 @@ const G14 = {}
 function g14Sprite(name) {
   if (!G14[name]) {
     const img = new Image()
-    img.src = `/assets/G14/${name}.png`
+    img.src = assetUrl(`/assets/G14/${name}.png`)
     G14[name] = img
   }
   return G14[name]

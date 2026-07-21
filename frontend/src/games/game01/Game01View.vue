@@ -1,5 +1,8 @@
 <template>
-  <main class="game01-view">
+  <main
+    class="game01-view"
+    :style="viewStyle"
+  >
     <section class="topbar">
       <RouterLink
         to="/"
@@ -108,6 +111,11 @@ import Game01SettingsPanel from './components/Game01SettingsPanel.vue'
 import { appendGame01Record, clearGame01Records, fetchGame01Store, resetGame01, saveGame01State } from './game01Api'
 import { recordGameResult } from '@/data/lobbyScore'
 import { BOARD_SIZE_OPTIONS, DEFAULT_BACK_IMAGE, createDefaultFrontImages, normalizeImageList } from './game01Defaults'
+import { assetUrl } from '@/utils/assetUrl'
+
+const viewStyle = {
+  '--game01-bg': `url("${assetUrl('/assets/G01/bg-starry-table.png')}")`
+}
 
 const ui = reactive({
   loading: true,
@@ -493,7 +501,7 @@ function wait(duration) {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background: #1b1630 url('/assets/G01/bg-starry-table.png') center top / cover no-repeat;
+  background: #1b1630 var(--game01-bg) center top / cover no-repeat;
   image-rendering: pixelated;
 }
 

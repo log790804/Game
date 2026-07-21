@@ -2,7 +2,7 @@
   <header class="lobby-header">
     <img
       class="mascot"
-      src="/assets/HOME/home-mascot-pixel-girl.png"
+      :src="images.mascot"
       alt="看板娘"
     >
 
@@ -14,7 +14,7 @@
 
       <img
         class="logo"
-        src="/assets/HOME/logo-game-factory-pixel.png"
+        :src="images.logo"
         alt="Game Factory"
       >
       <h1 class="zh-title">雙人對戰遊戲廳</h1>
@@ -24,6 +24,15 @@
     </div>
   </header>
 </template>
+
+<script setup>
+import { assetUrl } from '@/utils/assetUrl'
+
+const images = {
+  mascot: assetUrl('/assets/HOME/home-mascot-pixel-girl.png'),
+  logo: assetUrl('/assets/HOME/logo-game-factory-pixel.png')
+}
+</script>
 
 <style scoped>
 .lobby-header {

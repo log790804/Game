@@ -110,6 +110,7 @@
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { clearGame12Records, fetchGame12Store, saveGame12Record } from './game12Storage'
 import { recordGameResult } from '@/data/lobbyScore'
+import { assetUrl } from '@/utils/assetUrl'
 
 const CANVAS_W = 960
 const CANVAS_H = 560
@@ -141,7 +142,7 @@ const G12 = {}
 function g12Sprite(name) {
   if (!G12[name]) {
     const img = new Image()
-    img.src = `/assets/G12/${name}.png`
+    img.src = assetUrl(`/assets/G12/${name}.png`)
     G12[name] = img
   }
   return G12[name]
