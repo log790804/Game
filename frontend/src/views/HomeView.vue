@@ -1,6 +1,6 @@
 <template>
   <main class="home-view">
-    <HomeTechBackground />
+    <HomePixelBackground />
     <HomePageHeader />
     <HomePageContent />
     <HomePageFooter />
@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import HomeTechBackground from '@/components/home/HomeTechBackground.vue'
+import HomePixelBackground from '@/components/home/HomePixelBackground.vue'
 import HomePageHeader from '@/components/home/HomePageHeader.vue'
 import HomePageContent from '@/components/home/HomePageContent.vue'
 import HomePageFooter from '@/components/home/HomePageFooter.vue'
@@ -23,9 +23,9 @@ import HomePageFooter from '@/components/home/HomePageFooter.vue'
   display: grid;
   gap: 1.5rem;
   padding: 1.75rem 0 2.5rem;
-  color: #e9e6ff;
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  color: #fdf3e7;
+  font-family: 'Segoe UI', 'Noto Sans TC', system-ui, sans-serif;
 }
 
-/* animated tech background lives in HomeTechBackground.vue (fixed canvas, z-index -1) */
+/* 像素遊樂場背景在 HomePixelBackground.vue（fixed，z-index -1） */
 </style>

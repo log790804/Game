@@ -493,7 +493,8 @@ function wait(duration) {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background: radial-gradient(circle at 20% 0%, #241d44, #0b0a18 60%);
+  background: #1b1630 url('/assets/G01/bg-starry-table.png') center top / cover no-repeat;
+  image-rendering: pixelated;
 }
 
 .topbar {

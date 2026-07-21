@@ -114,6 +114,34 @@ const CANVAS_H = 460
 const FLOOR_Y = CANVAS_H - 56
 const FW = 40
 const FH = 78
+
+// 像素素材
+const G20 = {}
+function g20Sprite(name) {
+  if (!G20[name]) {
+    const img = new Image()
+    img.src = `/assets/G20/${name}.png`
+    G20[name] = img
+  }
+  return G20[name]
+}
+function g20ready(img) {
+  return img && img.complete && img.naturalWidth > 0
+}
+g20Sprite('bg-dojo')
+for (const pid of ['p1', 'p2']) {
+  for (const pose of ['idle', 'punch', 'kick', 'crouch', 'jump', 'hit', 'ko', 'special']) {
+    for (const side of ['l', 'r']) g20Sprite(`fighter-${pid}-${pose}-${side}`)
+  }
+}
+function g20Pose(p) {
+  if (game.over && p.hp <= 0) return 'ko'
+  if (p.hitstun > 0) return 'hit'
+  if (p.state === 'attack' && p.move) return p.move
+  if (!p.onGround) return 'jump'
+  if (isBlocking(p)) return 'crouch'
+  return 'idle'
+}
 const GRAVITY = 0.7
 const MOVE = 3.2
 const JUMP = 13
@@ -338,16 +366,19 @@ function loop(now) {
 }
 
 function render() {
-  const bg = ctx.createLinearGradient(0, 0, 0, CANVAS_H)
-  bg.addColorStop(0, '#2a1830')
-  bg.addColorStop(1, '#120a18')
-  ctx.fillStyle = bg
-  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
-  // floor
-  ctx.fillStyle = '#3a2a44'
-  ctx.fillRect(0, FLOOR_Y, CANVAS_W, CANVAS_H - FLOOR_Y)
-  ctx.fillStyle = 'rgba(255,255,255,0.1)'
-  ctx.fillRect(0, FLOOR_Y, CANVAS_W, 3)
+  ctx.imageSmoothingEnabled = false
+  const bgImg = g20Sprite('bg-dojo')
+  if (g20ready(bgImg)) {
+    ctx.drawImage(bgImg, 0, 0, CANVAS_W, CANVAS_H)
+  } else {
+    const bg = ctx.createLinearGradient(0, 0, 0, CANVAS_H)
+    bg.addColorStop(0, '#2a1830')
+    bg.addColorStop(1, '#120a18')
+    ctx.fillStyle = bg
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+    ctx.fillStyle = '#3a2a44'
+    ctx.fillRect(0, FLOOR_Y, CANVAS_W, CANVAS_H - FLOOR_Y)
+  }
 
   drawFighter(game.p1)
   drawFighter(game.p2)
@@ -362,16 +393,36 @@ function render() {
   ctx.globalAlpha = 1
 
   if (game.over && game.freeze > 0) {
-    ctx.fillStyle = '#fff'
-    ctx.font = 'bold 60px system-ui, sans-serif'
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.fillText('K.O.', CANVAS_W / 2, CANVAS_H / 2 - 20)
+    const ko = g20Sprite('txt-ko')
+    if (g20ready(ko)) {
+      const w = 260
+      const h = w * (ko.naturalHeight / ko.naturalWidth)
+      ctx.drawImage(ko, CANVAS_W / 2 - w / 2, CANVAS_H / 2 - h / 2 - 20, w, h)
+    } else {
+      ctx.fillStyle = '#fff'
+      ctx.font = 'bold 60px system-ui, sans-serif'
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillText('K.O.', CANVAS_W / 2, CANVAS_H / 2 - 20)
+    }
   }
 }
 
 function drawFighter(p) {
   const blocking = isBlocking(p)
+  // 像素鬥士精靈
+  const side = p.facing > 0 ? 'r' : 'l'
+  const img = g20Sprite(`fighter-${p.id}-${g20Pose(p)}-${side}`)
+  if (g20ready(img)) {
+    ctx.save()
+    if (p.hitFlash > 0 && Math.floor(p.hitFlash / 40) % 2 === 0) ctx.globalAlpha = 0.8
+    const h = 132
+    const w = h * (img.naturalWidth / img.naturalHeight)
+    ctx.imageSmoothingEnabled = false
+    ctx.drawImage(img, p.x - w / 2, FLOOR_Y - h, w, h)
+    ctx.restore()
+    return
+  }
   ctx.save()
   ctx.fillStyle = p.hitFlash > 0 ? '#fff' : p.color
   roundRect(p.x - FW / 2, p.y, FW, FH, 8)

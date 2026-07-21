@@ -136,6 +136,21 @@ const P1_MAX = CENTER - MIDZONE
 const P2_MIN = CENTER + MIDZONE
 const P2_MAX = CANVAS_W - MARGIN
 
+// 像素素材
+const G12 = {}
+function g12Sprite(name) {
+  if (!G12[name]) {
+    const img = new Image()
+    img.src = `/assets/G12/${name}.png`
+    G12[name] = img
+  }
+  return G12[name]
+}
+;['bg-castle', 'tank-p1-body-l', 'tank-p1-body-r', 'tank-p2-body-l', 'tank-p2-body-r', 'tank-p1-hit-l', 'tank-p1-hit-r', 'tank-p2-hit-l', 'tank-p2-hit-r', 'barrel-p1', 'barrel-p2', 'cannonball'].forEach(g12Sprite)
+function g12ready(img) {
+  return img && img.complete && img.naturalWidth > 0
+}
+
 const PAL = {
   p1: { body: '#2bd6b0', dark: '#11705e', glow: '#5fffe0', trim: '#aaffee' },
   p2: { body: '#ff6fa8', dark: '#9c3563', glow: '#ffb0d4', trim: '#ffd6e8' }
@@ -496,8 +511,14 @@ function render(now) {
   ctx.save()
   ctx.translate(sx, sy)
 
-  drawSky(now)
-  drawCastle(now)
+  ctx.imageSmoothingEnabled = false
+  const bgImg = g12Sprite('bg-castle')
+  if (g12ready(bgImg)) {
+    ctx.drawImage(bgImg, 0, 0, CANVAS_W, CANVAS_H)
+  } else {
+    drawSky(now)
+    drawCastle(now)
+  }
   drawEmbers(now)
   drawGround(now)
 
@@ -703,84 +724,58 @@ function drawTank(p, pal, now) {
   ctx.ellipse(x, gy + 4, 40, 8, 0, 0, Math.PI * 2)
   ctx.fill()
 
-  // tracks
-  const tg = ctx.createLinearGradient(0, gy - 16, 0, gy + 2)
-  tg.addColorStop(0, '#4a4760')
-  tg.addColorStop(1, '#1c1a2c')
-  ctx.fillStyle = tg
-  roundRect(x - 34, gy - 16, 68, 18, 9)
-  ctx.fill()
-  // wheels
-  ctx.fillStyle = '#0f0e1a'
-  for (let i = -2; i <= 2; i += 1) {
-    ctx.beginPath()
-    ctx.arc(x + i * 14, gy - 7, 5.4, 0, Math.PI * 2)
-    ctx.fill()
-  }
-  ctx.fillStyle = 'rgba(150,170,210,0.3)'
-  for (let i = -2; i <= 2; i += 1) {
-    ctx.beginPath()
-    ctx.arc(x + i * 14, gy - 7, 2, 0, Math.PI * 2)
-    ctx.fill()
-  }
-
-  // hull body (angled)
-  const hb = ctx.createLinearGradient(0, gy - 36, 0, gy - 14)
-  hb.addColorStop(0, pal.body)
-  hb.addColorStop(1, pal.dark)
-  ctx.fillStyle = hb
-  ctx.beginPath()
-  ctx.moveTo(x - 32, gy - 16)
-  ctx.lineTo(x - 26, gy - 32)
-  ctx.lineTo(x + 22, gy - 32)
-  ctx.lineTo(x + 32, gy - 16)
-  ctx.closePath()
-  ctx.fill()
-  // neon trim
-  ctx.strokeStyle = pal.trim
-  ctx.lineWidth = 1.5
-  ctx.globalAlpha = 0.8
-  ctx.stroke()
-  ctx.globalAlpha = 1
-  // hull panel detail
-  ctx.fillStyle = 'rgba(0,0,0,0.18)'
-  ctx.fillRect(x - 18, gy - 28, 30, 4)
-
-  // turret dome
   const turY = gy - 38 - p.recoil * 0.3
-  const dg = ctx.createRadialGradient(x - 4, turY - 4, 2, x, turY, 18)
-  dg.addColorStop(0, pal.glow)
-  dg.addColorStop(1, pal.dark)
-  ctx.fillStyle = dg
-  ctx.beginPath()
-  ctx.arc(x, turY, 15, Math.PI, Math.PI * 2)
-  ctx.fill()
-  ctx.fillStyle = pal.dark
-  ctx.fillRect(x - 15, turY, 30, 6)
-
-  // glowing core
-  const corePulse = 0.6 + 0.4 * Math.sin(now / 240 + p.facing)
-  ctx.save()
-  ctx.shadowColor = pal.glow
-  ctx.shadowBlur = 12 * corePulse
-  ctx.fillStyle = pal.glow
-  ctx.beginPath()
-  ctx.arc(x, turY - 4, 4, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.restore()
+  const pid = p === game.p2 ? 'p2' : 'p1'
+  const sideSuffix = p.facing === 1 ? 'r' : 'l'
+  const hurt = p.hitFlash > 0
+  const bodyImg = g12Sprite(`tank-${pid}-${hurt ? 'hit' : 'body'}-${sideSuffix}`)
+  if (g12ready(bodyImg)) {
+    const bw = hurt ? 96 : 84
+    const bh = bw * (bodyImg.naturalHeight / bodyImg.naturalWidth)
+    ctx.drawImage(bodyImg, x - bw / 2, gy + 4 - bh, bw, bh)
+  } else {
+    // fallback：簡化車身
+    ctx.fillStyle = pal.dark
+    roundRect(x - 34, gy - 16, 68, 18, 9)
+    ctx.fill()
+    ctx.fillStyle = pal.body
+    ctx.beginPath()
+    ctx.moveTo(x - 32, gy - 16)
+    ctx.lineTo(x - 26, gy - 32)
+    ctx.lineTo(x + 22, gy - 32)
+    ctx.lineTo(x + 32, gy - 16)
+    ctx.closePath()
+    ctx.fill()
+    ctx.fillStyle = pal.glow
+    ctx.beginPath()
+    ctx.arc(x, turY, 14, Math.PI, Math.PI * 2)
+    ctx.fill()
+  }
 
   // barrel
   ctx.save()
   ctx.translate(x, turY - 2)
-  ctx.rotate(p.facing === 1 ? -(p.angle * Math.PI) / 180 : Math.PI + (p.angle * Math.PI) / 180)
-  const bg = ctx.createLinearGradient(0, -5, 0, 5)
-  bg.addColorStop(0, '#6a6880')
-  bg.addColorStop(1, '#26243a')
-  ctx.fillStyle = bg
-  roundRect(-4 - p.recoil, -5, 42, 10, 4)
-  ctx.fill()
-  ctx.fillStyle = '#15131f'
-  ctx.fillRect(34 - p.recoil, -6, 7, 12)
+  if (p.facing === 1) {
+    ctx.rotate(-(p.angle * Math.PI) / 180)
+  } else {
+    ctx.scale(-1, 1)
+    ctx.rotate(-(p.angle * Math.PI) / 180)
+  }
+  const barrelImg = g12Sprite(`barrel-${pid}`)
+  if (g12ready(barrelImg)) {
+    const bw2 = 50
+    const bh2 = bw2 * (barrelImg.naturalHeight / barrelImg.naturalWidth)
+    ctx.drawImage(barrelImg, -8 - p.recoil, -bh2 / 2, bw2, bh2)
+  } else {
+    const bg = ctx.createLinearGradient(0, -5, 0, 5)
+    bg.addColorStop(0, '#6a6880')
+    bg.addColorStop(1, '#26243a')
+    ctx.fillStyle = bg
+    roundRect(-4 - p.recoil, -5, 42, 10, 4)
+    ctx.fill()
+    ctx.fillStyle = '#15131f'
+    ctx.fillRect(34 - p.recoil, -6, 7, 12)
+  }
   // muzzle flash
   if (p.flash > 0) {
     ctx.globalAlpha = p.flash
@@ -856,26 +851,29 @@ function drawShell(p, pal) {
   ctx.stroke()
   ctx.lineCap = 'butt'
 
-  // big glowing shell
-  ctx.save()
-  ctx.shadowColor = '#ffba55'
-  ctx.shadowBlur = 20
-  const g = ctx.createRadialGradient(s.x - 3, s.y - 3, 2, s.x, s.y, SHELL_R)
-  g.addColorStop(0, '#fff4c0')
-  g.addColorStop(0.5, '#ff9a3a')
-  g.addColorStop(1, '#d6481f')
-  ctx.fillStyle = g
-  ctx.beginPath()
-  ctx.arc(s.x, s.y, SHELL_R, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.shadowBlur = 0
-  // metal band
-  ctx.strokeStyle = 'rgba(60,30,10,0.6)'
-  ctx.lineWidth = 2
-  ctx.beginPath()
-  ctx.ellipse(s.x, s.y, SHELL_R, SHELL_R * 0.5, s.spin, 0, Math.PI * 2)
-  ctx.stroke()
-  ctx.restore()
+  // 砲彈
+  const ball = g12Sprite('cannonball')
+  if (g12ready(ball)) {
+    const sz = SHELL_R * 2.4
+    ctx.save()
+    ctx.translate(s.x, s.y)
+    ctx.rotate(s.spin || 0)
+    ctx.drawImage(ball, -sz / 2, -sz / 2, sz, sz)
+    ctx.restore()
+  } else {
+    ctx.save()
+    ctx.shadowColor = '#ffba55'
+    ctx.shadowBlur = 20
+    const g = ctx.createRadialGradient(s.x - 3, s.y - 3, 2, s.x, s.y, SHELL_R)
+    g.addColorStop(0, '#fff4c0')
+    g.addColorStop(0.5, '#ff9a3a')
+    g.addColorStop(1, '#d6481f')
+    ctx.fillStyle = g
+    ctx.beginPath()
+    ctx.arc(s.x, s.y, SHELL_R, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.restore()
+  }
 }
 
 function drawParticles() {

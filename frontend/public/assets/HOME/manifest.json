@@ -1,0 +1,91 @@
+{
+ "folder": "HOME",
+ "title": "大廳 / 首頁",
+ "theme": "日系像素電玩遊樂場・夜晚霓虹街・粉彩夜色",
+ "items": [
+  {
+   "f": "home-mascot-pixel-girl.png",
+   "label": "看板娘",
+   "use": "首頁標題區角色,透明背景",
+   "w": 192,
+   "h": 232
+  },
+  {
+   "f": "logo-game-factory-pixel.png",
+   "label": "Game Factory Logo",
+   "use": "網站 Logo,透明背景",
+   "w": 328,
+   "h": 140
+  },
+  {
+   "f": "home-bg-pixel-arcade.png",
+   "label": "首頁主背景",
+   "use": "整頁背景 1280x720,cover 鋪滿",
+   "w": 1280,
+   "h": 720
+  },
+  {
+   "f": "ui-game-card-frame.png",
+   "label": "遊戲卡片框",
+   "use": "9-slice(邊距 20px@4x),20 張卡片共用",
+   "w": 192,
+   "h": 256
+  },
+  {
+   "f": "fx-card-hover-glow.png",
+   "label": "卡片 hover 光暈",
+   "use": "置於卡片後方,hover 時淡入",
+   "w": 224,
+   "h": 288
+  },
+  {
+   "f": "btn-enter-pixel.png",
+   "label": "進入按鈕",
+   "use": "「進入遊戲」按鈕,hover 時整體上移 4px",
+   "w": 136,
+   "h": 56
+  },
+  {
+   "f": "badge-pending.png",
+   "label": "待挑戰徽章",
+   "use": "卡片右上角狀態標示",
+   "w": 80,
+   "h": 80
+  },
+  {
+   "f": "deco-stars-particles.png",
+   "label": "背景星點 tile",
+   "use": "repeat 平鋪於背景上層,透明",
+   "w": 256,
+   "h": 256
+  },
+  {
+   "f": "loading-pixel-star-1.png",
+   "label": "Loading 轉星 1/4",
+   "use": "CSS steps(4) 每幀 120ms 輪播",
+   "w": 96,
+   "h": 96
+  },
+  {
+   "f": "loading-pixel-star-2.png",
+   "label": "Loading 轉星 2/4",
+   "use": "CSS steps(4) 每幀 120ms 輪播",
+   "w": 96,
+   "h": 96
+  },
+  {
+   "f": "loading-pixel-star-3.png",
+   "label": "Loading 轉星 3/4",
+   "use": "CSS steps(4) 每幀 120ms 輪播",
+   "w": 96,
+   "h": 96
+  },
+  {
+   "f": "loading-pixel-star-4.png",
+   "label": "Loading 轉星 4/4",
+   "use": "CSS steps(4) 每幀 120ms 輪播",
+   "w": 96,
+   "h": 96
+  }
+ ]
+}

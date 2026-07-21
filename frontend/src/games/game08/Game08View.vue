@@ -223,6 +223,29 @@ const FRUIT_COLORS = {
   '🍉': '#2bd66e'
 }
 
+// 像素素材
+const G08 = {}
+function g08Sprite(name) {
+  if (!G08[name]) {
+    const img = new Image()
+    img.src = `/assets/G08/${name}.png`
+    G08[name] = img
+  }
+  return G08[name]
+}
+const FRUIT_SPRITE = {
+  '🍎': 'fruit-apple',
+  '🍊': 'fruit-orange',
+  '🍇': 'fruit-grape',
+  '🍓': 'fruit-cherry',
+  '🍑': 'fruit-peach',
+  '🍉': 'fruit-grape'
+}
+;['bg-orchard', 'basket-cat', 'bomb', 'fruit-apple', 'fruit-orange', 'fruit-grape', 'fruit-cherry', 'fruit-peach', 'fx-catch-1', 'fx-catch-2', 'fx-catch-3'].forEach(g08Sprite)
+function g08ready(img) {
+  return img && img.complete && img.naturalWidth > 0
+}
+
 function darken(hex, f) {
   const n = parseInt(hex.slice(1), 16)
   const r = Math.round(((n >> 16) & 255) * f)
@@ -469,13 +492,19 @@ function loop(now) {
 
 function render(now) {
   // background
-  ctx.fillStyle = '#0c1530'
-  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
-  const sky = ctx.createLinearGradient(0, 0, 0, CANVAS_H)
-  sky.addColorStop(0, '#1a2a52')
-  sky.addColorStop(1, '#0c1530')
-  ctx.fillStyle = sky
-  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+  ctx.imageSmoothingEnabled = false
+  const bgImg = g08Sprite('bg-orchard')
+  if (g08ready(bgImg)) {
+    ctx.drawImage(bgImg, 0, 0, CANVAS_W, CANVAS_H)
+  } else {
+    ctx.fillStyle = '#0c1530'
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+    const sky = ctx.createLinearGradient(0, 0, 0, CANVAS_H)
+    sky.addColorStop(0, '#1a2a52')
+    sky.addColorStop(1, '#0c1530')
+    ctx.fillStyle = sky
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+  }
 
   // halves tint
   drawSideBg(game.p1, 0, 'rgba(58,255,176,0.04)')
@@ -681,11 +710,18 @@ function drawFreezeShape(c, R) {
 }
 
 function drawItemShape(c, type, fruit, R) {
-  if (type === 'bomb') drawBombShape(c, R)
-  else if (type === 'golden') drawGoldenShape(c, R)
+  if (type === 'bomb') {
+    const img = g08Sprite('bomb')
+    if (g08ready(img)) { c.imageSmoothingEnabled = false; c.drawImage(img, -R * 1.2, -R * 1.2, R * 2.4, R * 2.4); return }
+    drawBombShape(c, R)
+  } else if (type === 'golden') drawGoldenShape(c, R)
   else if (type === 'magnet') drawMagnetShape(c, R)
   else if (type === 'freeze') drawFreezeShape(c, R)
-  else drawFruitShape(c, FRUIT_COLORS[fruit] || '#ff4d4d', R)
+  else {
+    const img = g08Sprite(FRUIT_SPRITE[fruit])
+    if (g08ready(img)) { c.imageSmoothingEnabled = false; c.drawImage(img, -R * 1.2, -R * 1.2, R * 2.4, R * 2.4); return }
+    drawFruitShape(c, FRUIT_COLORS[fruit] || '#ff4d4d', R)
+  }
 }
 
 function drawItems(side, now) {
@@ -704,6 +740,20 @@ function drawBasket(side, color, now) {
   const y = BASKET_Y
   const w = BASKET_W
   const glow = now < side.magnetUntil ? '#a78bfa' : now < side.freezeUntil ? '#4dd0ff' : color
+  const img = g08Sprite('basket-cat')
+  if (g08ready(img)) {
+    const bw = w + 24
+    const bh = bw * (img.naturalHeight / img.naturalWidth)
+    if (now < side.magnetUntil || now < side.freezeUntil) {
+      ctx.save()
+      ctx.shadowColor = glow
+      ctx.shadowBlur = 18
+    }
+    ctx.imageSmoothingEnabled = false
+    ctx.drawImage(img, x - bw / 2, y + 24 - bh, bw, bh)
+    if (now < side.magnetUntil || now < side.freezeUntil) ctx.restore()
+    return
+  }
   ctx.save()
   ctx.shadowColor = glow
   ctx.shadowBlur = 16
@@ -716,18 +766,8 @@ function drawBasket(side, color, now) {
   ctx.closePath()
   ctx.fill()
   ctx.restore()
-  // rim
   ctx.fillStyle = 'rgba(255,255,255,0.85)'
   ctx.fillRect(x - w / 2, y - 18, w, 6)
-  // weave lines
-  ctx.strokeStyle = 'rgba(0,0,0,0.18)'
-  ctx.lineWidth = 2
-  for (let i = -1; i <= 1; i += 1) {
-    ctx.beginPath()
-    ctx.moveTo(x + i * 22, y - 12)
-    ctx.lineTo(x + i * 16, y + 20)
-    ctx.stroke()
-  }
 }
 
 function drawPopups(side) {

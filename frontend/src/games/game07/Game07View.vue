@@ -156,6 +156,21 @@ const PADDLE_R = 34
 const PUCK_R = 19
 const PADDLE_SPEED = 0.9
 const PADDLE_FRICTION = 0.82
+
+// 像素素材
+const G07 = {}
+function g07Sprite(name) {
+  if (!G07[name]) {
+    const img = new Image()
+    img.src = `/assets/G07/${name}.png`
+    G07[name] = img
+  }
+  return G07[name]
+}
+;['bg-table', 'paddle-p1', 'paddle-p2', 'puck', 'txt-goal', 'fx-goal-1', 'fx-goal-2', 'fx-goal-3', 'fx-goal-4'].forEach(g07Sprite)
+function g07ready(img) {
+  return img && img.complete && img.naturalWidth > 0
+}
 const PUCK_FRICTION = 0.9975
 const PUCK_MAX = 16
 const BASE_PUCK_SPEED = 6
@@ -394,53 +409,50 @@ function render() {
   ctx.save()
   ctx.translate(shakeX, shakeY)
 
-  // rink
-  ctx.fillStyle = '#0d2438'
-  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
-  const rink = ctx.createLinearGradient(0, 0, 0, CANVAS_H)
-  rink.addColorStop(0, '#123a52')
-  rink.addColorStop(0.5, '#0e2c42')
-  rink.addColorStop(1, '#123a52')
-  ctx.fillStyle = rink
-  ctx.fillRect(WALL, WALL, CANVAS_W - WALL * 2, CANVAS_H - WALL * 2)
-
-  // center line + circle
-  ctx.strokeStyle = 'rgba(120,210,255,0.4)'
-  ctx.lineWidth = 3
-  ctx.beginPath()
-  ctx.moveTo(WALL, CANVAS_H / 2)
-  ctx.lineTo(CANVAS_W - WALL, CANVAS_H / 2)
-  ctx.stroke()
-  ctx.beginPath()
-  ctx.arc(CANVAS_W / 2, CANVAS_H / 2, 80, 0, Math.PI * 2)
-  ctx.stroke()
-  ctx.beginPath()
-  ctx.arc(CANVAS_W / 2, CANVAS_H / 2, 6, 0, Math.PI * 2)
-  ctx.fillStyle = 'rgba(120,210,255,0.5)'
-  ctx.fill()
-
-  // goals
+  // 球桌背景
+  ctx.imageSmoothingEnabled = false
+  const tableImg = g07Sprite('bg-table')
   const goalMinX = (CANVAS_W - GOAL_W) / 2
-  ctx.fillStyle = 'rgba(255,158,200,0.25)'
-  ctx.fillRect(goalMinX, 0, GOAL_W, WALL)
-  ctx.fillStyle = 'rgba(58,255,208,0.25)'
-  ctx.fillRect(goalMinX, CANVAS_H - WALL, GOAL_W, WALL)
-  ctx.strokeStyle = '#ff9ec8'
-  ctx.lineWidth = 4
-  ctx.beginPath()
-  ctx.moveTo(goalMinX, WALL)
-  ctx.lineTo(goalMinX + GOAL_W, WALL)
-  ctx.stroke()
-  ctx.strokeStyle = '#3affd0'
-  ctx.beginPath()
-  ctx.moveTo(goalMinX, CANVAS_H - WALL)
-  ctx.lineTo(goalMinX + GOAL_W, CANVAS_H - WALL)
-  ctx.stroke()
-
-  // border
-  ctx.strokeStyle = 'rgba(120,210,255,0.5)'
-  ctx.lineWidth = 4
-  ctx.strokeRect(WALL, WALL, CANVAS_W - WALL * 2, CANVAS_H - WALL * 2)
+  if (g07ready(tableImg)) {
+    ctx.drawImage(tableImg, 0, 0, CANVAS_W, CANVAS_H)
+    // 球門口標示（功能對位用，淡淡一條）
+    ctx.strokeStyle = 'rgba(255,158,200,0.7)'
+    ctx.lineWidth = 4
+    ctx.beginPath()
+    ctx.moveTo(goalMinX, WALL)
+    ctx.lineTo(goalMinX + GOAL_W, WALL)
+    ctx.stroke()
+    ctx.strokeStyle = 'rgba(58,255,208,0.7)'
+    ctx.beginPath()
+    ctx.moveTo(goalMinX, CANVAS_H - WALL)
+    ctx.lineTo(goalMinX + GOAL_W, CANVAS_H - WALL)
+    ctx.stroke()
+  } else {
+    ctx.fillStyle = '#0d2438'
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+    const rink = ctx.createLinearGradient(0, 0, 0, CANVAS_H)
+    rink.addColorStop(0, '#123a52')
+    rink.addColorStop(0.5, '#0e2c42')
+    rink.addColorStop(1, '#123a52')
+    ctx.fillStyle = rink
+    ctx.fillRect(WALL, WALL, CANVAS_W - WALL * 2, CANVAS_H - WALL * 2)
+    ctx.strokeStyle = 'rgba(120,210,255,0.4)'
+    ctx.lineWidth = 3
+    ctx.beginPath()
+    ctx.moveTo(WALL, CANVAS_H / 2)
+    ctx.lineTo(CANVAS_W - WALL, CANVAS_H / 2)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.arc(CANVAS_W / 2, CANVAS_H / 2, 80, 0, Math.PI * 2)
+    ctx.stroke()
+    ctx.fillStyle = 'rgba(255,158,200,0.25)'
+    ctx.fillRect(goalMinX, 0, GOAL_W, WALL)
+    ctx.fillStyle = 'rgba(58,255,208,0.25)'
+    ctx.fillRect(goalMinX, CANVAS_H - WALL, GOAL_W, WALL)
+    ctx.strokeStyle = 'rgba(120,210,255,0.5)'
+    ctx.lineWidth = 4
+    ctx.strokeRect(WALL, WALL, CANVAS_W - WALL * 2, CANVAS_H - WALL * 2)
+  }
 
   // puck trail
   for (let i = 0; i < game.trail.length; i += 1) {
@@ -453,28 +465,47 @@ function render() {
   }
   ctx.globalAlpha = 1
 
-  drawPaddle(game.p2, '#ff9ec8', '#ff6fa8')
-  drawPaddle(game.p1, '#3affd0', '#13d9aa')
+  drawPaddle(game.p2, 'paddle-p2', '#ff9ec8', '#ff6fa8')
+  drawPaddle(game.p1, 'paddle-p1', '#3affd0', '#13d9aa')
 
   // puck
-  ctx.save()
-  ctx.shadowColor = '#ffe66d'
-  ctx.shadowBlur = 18
-  const pg = ctx.createRadialGradient(
-    game.puck.x - 4,
-    game.puck.y - 4,
-    2,
-    game.puck.x,
-    game.puck.y,
-    PUCK_R
-  )
-  pg.addColorStop(0, '#fff7c2')
-  pg.addColorStop(1, '#ffd23f')
-  ctx.fillStyle = pg
-  ctx.beginPath()
-  ctx.arc(game.puck.x, game.puck.y, PUCK_R, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.restore()
+  const puckImg = g07Sprite('puck')
+  if (g07ready(puckImg)) {
+    const sz = PUCK_R * 2.3
+    ctx.drawImage(puckImg, game.puck.x - sz / 2, game.puck.y - sz / 2, sz, sz)
+  } else {
+    ctx.save()
+    ctx.shadowColor = '#ffe66d'
+    ctx.shadowBlur = 18
+    const pg = ctx.createRadialGradient(game.puck.x - 4, game.puck.y - 4, 2, game.puck.x, game.puck.y, PUCK_R)
+    pg.addColorStop(0, '#fff7c2')
+    pg.addColorStop(1, '#ffd23f')
+    ctx.fillStyle = pg
+    ctx.beginPath()
+    ctx.arc(game.puck.x, game.puck.y, PUCK_R, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.restore()
+  }
+
+  // 進球特效 + GOAL 文字
+  if (game.flash > 0) {
+    const frame = `fx-goal-${Math.min(4, Math.max(1, 5 - Math.ceil(game.flash * 4)))}`
+    const fx = g07Sprite(frame)
+    if (g07ready(fx)) {
+      const fs = 180
+      ctx.globalAlpha = Math.min(1, game.flash * 1.4)
+      ctx.drawImage(fx, CANVAS_W / 2 - fs / 2, CANVAS_H / 2 - fs / 2, fs, fs)
+      ctx.globalAlpha = 1
+    }
+    const goalTxt = g07Sprite('txt-goal')
+    if (g07ready(goalTxt)) {
+      const gw = 220
+      const gh = gw * (goalTxt.naturalHeight / goalTxt.naturalWidth)
+      ctx.globalAlpha = Math.min(1, game.flash * 1.6)
+      ctx.drawImage(goalTxt, CANVAS_W / 2 - gw / 2, CANVAS_H / 2 - gh / 2, gw, gh)
+      ctx.globalAlpha = 1
+    }
+  }
 
   if (game.serveTimer > 0) {
     ctx.fillStyle = 'rgba(255,255,255,0.85)'
@@ -491,7 +522,13 @@ function render() {
   }
 }
 
-function drawPaddle(p, light, dark) {
+function drawPaddle(p, spriteName, light, dark) {
+  const img = g07Sprite(spriteName)
+  if (g07ready(img)) {
+    const sz = PADDLE_R * 2.4
+    ctx.drawImage(img, p.x - sz / 2, p.y - sz / 2, sz, sz)
+    return
+  }
   ctx.save()
   ctx.shadowColor = light
   ctx.shadowBlur = 16

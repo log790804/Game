@@ -124,6 +124,28 @@ const records = ref([])
 const keys = new Set()
 const WIDTH = 720
 const HEIGHT = 960
+
+// 像素素材
+const SPRITES = {}
+function sprite(name) {
+  if (!SPRITES[name]) {
+    const img = new Image()
+    img.src = `/assets/G02/${name}.png`
+    SPRITES[name] = img
+  }
+  return SPRITES[name]
+}
+function drawSprite(context, name, cx, cy, w, h, rotation = 0) {
+  const img = sprite(name)
+  if (!img.complete || img.naturalWidth === 0) return false
+  context.save()
+  context.translate(cx, cy)
+  if (rotation) context.rotate(rotation)
+  context.drawImage(img, -w / 2, -h / 2, w, h)
+  context.restore()
+  return true
+}
+;['bg-space', 'ship-p1', 'ship-p2', 'enemy-grunt', 'enemy-heavy', 'bullet-p1', 'bullet-p2', 'fx-thruster-1', 'fx-thruster-2', 'fx-boom-1', 'fx-boom-2', 'fx-boom-3', 'fx-boom-4'].forEach(sprite)
 const PLAYER_SPEED = 280
 const BULLET_SPEED = 620
 const PLAYER_SHOT_COOLDOWN = 0.12
@@ -609,93 +631,105 @@ function render(context) {
 }
 
 function drawBackground(context) {
-  const gradient = context.createLinearGradient(0, 0, 0, HEIGHT)
-  gradient.addColorStop(0, '#132746')
-  gradient.addColorStop(0.55, '#18375f')
-  gradient.addColorStop(1, '#081524')
-  context.fillStyle = gradient
-  context.fillRect(0, 0, WIDTH, HEIGHT)
+  context.imageSmoothingEnabled = false
+  const bg = sprite('bg-space')
+  if (bg.complete && bg.naturalWidth > 0) {
+    context.drawImage(bg, 0, 0, WIDTH, HEIGHT)
+  } else {
+    const gradient = context.createLinearGradient(0, 0, 0, HEIGHT)
+    gradient.addColorStop(0, '#132746')
+    gradient.addColorStop(0.55, '#18375f')
+    gradient.addColorStop(1, '#081524')
+    context.fillStyle = gradient
+    context.fillRect(0, 0, WIDTH, HEIGHT)
+  }
 
-  context.fillStyle = 'rgba(255,255,255,0.78)'
+  // 視差星點，讓背景動起來
+  context.fillStyle = 'rgba(255,255,255,0.65)'
   for (const star of state.stars) {
     context.fillRect(star.x, star.y, star.size, star.size)
   }
-
-  const glow = context.createRadialGradient(WIDTH / 2, HEIGHT * 0.18, 40, WIDTH / 2, HEIGHT * 0.18, 260)
-  glow.addColorStop(0, 'rgba(255, 221, 152, 0.22)')
-  glow.addColorStop(1, 'rgba(255, 221, 152, 0)')
-  context.fillStyle = glow
-  context.fillRect(0, 0, WIDTH, HEIGHT)
 }
 
 function drawPlayers(context) {
-  for (const player of state.players) {
+  for (let i = 0; i < state.players.length; i += 1) {
+    const player = state.players[i]
     if (player.hp <= 0) {
       continue
     }
 
-    context.save()
-    context.translate(player.x, player.y)
-    context.fillStyle = player.color
-    context.beginPath()
-    context.moveTo(0, -34)
-    context.lineTo(22, 20)
-    context.lineTo(8, 10)
-    context.lineTo(0, 28)
-    context.lineTo(-8, 10)
-    context.lineTo(-22, 20)
-    context.closePath()
-    context.fill()
+    // 噴射尾焰（兩幀交替）
+    const thrusterFrame = Math.floor(state.elapsed * 12) % 2 === 0 ? 'fx-thruster-1' : 'fx-thruster-2'
+    drawSprite(context, thrusterFrame, player.x, player.y + 40, 22, 26)
 
-    context.fillStyle = 'rgba(255,255,255,0.85)'
-    context.fillRect(-5, -6, 10, 18)
-    context.fillRect(-16, 4, 8, 12)
-    context.fillRect(8, 4, 8, 12)
-
-    if (player.powerLevel >= 2) {
-      context.fillStyle = 'rgba(255, 240, 180, 0.75)'
-      context.fillRect(-24, -2, 6, 16)
-      context.fillRect(18, -2, 6, 16)
+    const shipName = i === 0 ? 'ship-p1' : 'ship-p2'
+    const drawn = drawSprite(context, shipName, player.x, player.y, 58, 62)
+    if (!drawn) {
+      context.save()
+      context.translate(player.x, player.y)
+      context.fillStyle = player.color
+      context.beginPath()
+      context.moveTo(0, -34)
+      context.lineTo(22, 20)
+      context.lineTo(0, 28)
+      context.lineTo(-22, 20)
+      context.closePath()
+      context.fill()
+      context.restore()
     }
 
-    context.restore()
+    // 火力等級提升時加一圈護罩光
+    if (player.powerLevel >= 2) {
+      context.save()
+      context.globalAlpha = 0.5
+      context.strokeStyle = i === 0 ? '#ffd9a0' : '#a2cffe'
+      context.lineWidth = 3
+      context.beginPath()
+      context.arc(player.x, player.y, 40, 0, Math.PI * 2)
+      context.stroke()
+      context.restore()
+    }
   }
 }
 
 function drawBullets(context) {
   for (const bullet of state.bullets) {
-    context.fillStyle = bullet.color
-    context.beginPath()
-    context.arc(bullet.x, bullet.y, bullet.radius, 0, Math.PI * 2)
-    context.fill()
+    const name = bullet.owner === state.players[1]?.name ? 'bullet-p2' : 'bullet-p1'
+    const scale = bullet.radius / 7
+    const drawn = drawSprite(context, name, bullet.x, bullet.y, 16 * scale, 24 * scale)
+    if (!drawn) {
+      context.fillStyle = bullet.color
+      context.beginPath()
+      context.arc(bullet.x, bullet.y, bullet.radius, 0, Math.PI * 2)
+      context.fill()
+    }
   }
 }
 
 function drawEnemies(context) {
   for (const enemy of state.enemies) {
-    context.save()
-    context.translate(enemy.x, enemy.y)
-    context.fillStyle = enemy.isElite ? '#ffd56e' : '#ff7367'
-    context.beginPath()
-    context.moveTo(0, 30)
-    context.lineTo(26, -12)
-    context.lineTo(12, -10)
-    context.lineTo(0, -34)
-    context.lineTo(-12, -10)
-    context.lineTo(-26, -12)
-    context.closePath()
-    context.fill()
-
-    if (enemy.isElite) {
-      context.fillStyle = 'rgba(255,255,255,0.72)'
-      context.fillRect(-7, -4, 14, 20)
+    const name = enemy.isElite ? 'enemy-heavy' : 'enemy-grunt'
+    const size = enemy.isElite ? 76 : 56
+    const drawn = drawSprite(context, name, enemy.x, enemy.y, size, size)
+    if (!drawn) {
+      context.save()
+      context.translate(enemy.x, enemy.y)
+      context.fillStyle = enemy.isElite ? '#ffd56e' : '#ff7367'
+      context.beginPath()
+      context.moveTo(0, 30)
+      context.lineTo(26, -12)
+      context.lineTo(0, -34)
+      context.lineTo(-26, -12)
+      context.closePath()
+      context.fill()
+      context.restore()
     }
 
+    // 血條
     context.fillStyle = 'rgba(15, 31, 52, 0.72)'
-    context.fillRect(-18, 36, 36, 5)
+    context.fillRect(enemy.x - 18, enemy.y + 36, 36, 5)
     context.fillStyle = enemy.isElite ? '#ffe8a2' : '#ffa598'
-    context.fillRect(-18, 36, 36 * (enemy.hp / enemy.maxHp), 5)
-    context.restore()
+    context.fillRect(enemy.x - 18, enemy.y + 36, 36 * (enemy.hp / enemy.maxHp), 5)
   }
 }
 

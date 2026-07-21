@@ -130,18 +130,22 @@ import { RouterLink } from 'vue-router'
 import { clearGame03Records, fetchGame03Store, saveGame03Record } from './game03Storage'
 import { recordGameResult } from '@/data/lobbyScore'
 
+// 像素樓層磚塊（夜晚都市風）
 const FLOOR_IMAGE_URLS = [
-  new URL('./assets/floors/floor-01.png', import.meta.url).href,
-  new URL('./assets/floors/floor-02.png', import.meta.url).href,
-  new URL('./assets/floors/floor-03.png', import.meta.url).href,
-  new URL('./assets/floors/floor-04.png', import.meta.url).href,
-  new URL('./assets/floors/floor-05.png', import.meta.url).href,
-  new URL('./assets/floors/floor-06.png', import.meta.url).href,
-  new URL('./assets/floors/floor-07.png', import.meta.url).href,
-  new URL('./assets/floors/floor-08.png', import.meta.url).href,
-  new URL('./assets/floors/floor-09.png', import.meta.url).href,
-  new URL('./assets/floors/floor-10.png', import.meta.url).href
+  '/assets/G03/block-floor-a.png',
+  '/assets/G03/block-floor-b.png',
+  '/assets/G03/block-floor-c.png',
+  '/assets/G03/block-floor-d.png',
+  '/assets/G03/block-floor-e.png',
+  '/assets/G03/block-floor-f.png',
+  '/assets/G03/block-floor-glass.png',
+  '/assets/G03/block-floor-neon.png'
 ]
+
+const cityBgImage = new Image()
+cityBgImage.src = '/assets/G03/bg-city-night.png'
+const craneHookImage = new Image()
+craneHookImage.src = '/assets/G03/crane-hook.png'
 
 const canvasRef = ref(null)
 const stageRef = ref(null)
@@ -525,29 +529,19 @@ function drawPlayerViewport(context, player, playerIndex) {
 }
 
 function drawBackground(context, viewportX = 0, playerIndex = 0) {
-  const gradient = context.createLinearGradient(0, 0, 0, HEIGHT)
-  gradient.addColorStop(0, '#cfeeff')
-  gradient.addColorStop(0.55, '#fff4d8')
-  gradient.addColorStop(1, '#f0c99f')
-  context.fillStyle = gradient
-  context.fillRect(viewportX, 0, VIEW_WIDTH, HEIGHT)
-
-  context.fillStyle = 'rgba(255, 255, 255, 0.72)'
-  context.beginPath()
-  context.arc(viewportX + 98 + playerIndex * 24, 112, 42, 0, Math.PI * 2)
-  context.arc(viewportX + 136 + playerIndex * 24, 112, 55, 0, Math.PI * 2)
-  context.arc(viewportX + 184 + playerIndex * 24, 112, 42, 0, Math.PI * 2)
-  context.fill()
-
-  context.fillStyle = 'rgba(126, 92, 60, 0.12)'
-  for (let index = 0; index < 5; index += 1) {
-    const x = viewportX + index * 96
-    const height = 68 + (index % 3) * 28
-    context.fillRect(x, HEIGHT - 58 - height, 70, height)
+  context.imageSmoothingEnabled = false
+  if (cityBgImage.complete && cityBgImage.naturalWidth > 0) {
+    // 從整張夜景裁切左/右半邊填入各自視窗，兩邊略有差異
+    const srcW = cityBgImage.naturalWidth / 2
+    const srcX = playerIndex === 0 ? 0 : srcW
+    context.drawImage(cityBgImage, srcX, 0, srcW, cityBgImage.naturalHeight, viewportX, 0, VIEW_WIDTH, HEIGHT)
+  } else {
+    const gradient = context.createLinearGradient(0, 0, 0, HEIGHT)
+    gradient.addColorStop(0, '#2a2440')
+    gradient.addColorStop(1, '#4a3a5a')
+    context.fillStyle = gradient
+    context.fillRect(viewportX, 0, VIEW_WIDTH, HEIGHT)
   }
-
-  context.fillStyle = 'rgba(126, 92, 60, 0.2)'
-  context.fillRect(viewportX, HEIGHT - 58, VIEW_WIDTH, 58)
 }
 
 function drawSplitDivider(context) {
@@ -573,22 +567,30 @@ function drawCrane(context, player) {
   const crane = getCranePosition(player)
   const lineEndY = crane.y + 42
 
+  // 吊車橫樑
   context.strokeStyle = '#6f5642'
-  context.lineWidth = 5
+  context.lineWidth = 6
   context.beginPath()
-  context.moveTo(player.towerX - 210, crane.y - 30)
-  context.lineTo(player.towerX + 210, crane.y - 30)
+  context.moveTo(player.towerX - 210, crane.y - 34)
+  context.lineTo(player.towerX + 210, crane.y - 34)
   context.stroke()
 
-  context.fillStyle = '#8c6a4f'
-  context.fillRect(crane.x - 22, crane.y - 44, 44, 26)
-
+  // 吊鉤吊繩
   context.strokeStyle = '#4f3d31'
   context.lineWidth = 3
   context.beginPath()
-  context.moveTo(crane.x, crane.y - 18)
-  context.lineTo(crane.x, lineEndY)
+  context.moveTo(crane.x, crane.y - 34)
+  context.lineTo(crane.x, crane.y - 6)
   context.stroke()
+
+  // 吊鉤精靈
+  if (craneHookImage.complete && craneHookImage.naturalWidth > 0) {
+    context.imageSmoothingEnabled = false
+    context.drawImage(craneHookImage, crane.x - 20, crane.y - 18, 40, 65)
+  } else {
+    context.fillStyle = '#8c6a4f'
+    context.fillRect(crane.x - 22, crane.y - 44, 44, 26)
+  }
 
   drawHouseBlock(context, crane.x - BLOCK_WIDTH / 2, lineEndY, BLOCK_WIDTH, BLOCK_HEIGHT, player.color, true, getNextImageIndex(player))
 }

@@ -190,6 +190,23 @@ const P1_KEYS = { d: 0, f: 1, g: 2 }
 const P2_KEYS = { j: 0, k: 1, l: 2 }
 const LANE_COLORS = ['#46d0ff', '#a78bfa', '#ff7ab0']
 
+// 像素素材
+const G06 = {}
+function g06Sprite(name) {
+  if (!G06[name]) {
+    const img = new Image()
+    img.src = `/assets/G06/${name}.png`
+    G06[name] = img
+  }
+  return G06[name]
+}
+const LANE_HUE = ['blue', 'purple', 'pink']
+const POPUP_SPRITE = { PERFECT: 'txt-perfect', GOOD: 'txt-good', MISS: 'txt-miss' }
+;['bg-lanes', 'judgeline', 'note-blue', 'note-purple', 'note-pink', 'target-blue', 'target-purple', 'target-pink', 'txt-perfect', 'txt-good', 'txt-miss', 'fx-hit-1', 'fx-hit-2', 'fx-hit-3'].forEach(g06Sprite)
+function g06ready(img) {
+  return img && img.complete && img.naturalWidth > 0
+}
+
 const canvasRef = ref(null)
 const stageRef = ref(null)
 
@@ -481,51 +498,91 @@ function render() {
 
   for (const pop of judgePopups) {
     ctx.globalAlpha = Math.max(0, pop.life)
-    ctx.fillStyle = pop.color
-    ctx.font = 'bold 22px system-ui, sans-serif'
-    ctx.textAlign = 'center'
-    ctx.fillText(pop.text, pop.x, pop.y)
+    const sprName = POPUP_SPRITE[pop.text]
+    const spr = sprName ? g06Sprite(sprName) : null
+    if (g06ready(spr)) {
+      const h = 30
+      const w = h * (spr.naturalWidth / spr.naturalHeight)
+      ctx.drawImage(spr, pop.x - w / 2, pop.y - h, w, h)
+    } else {
+      ctx.fillStyle = pop.color
+      ctx.font = 'bold 22px system-ui, sans-serif'
+      ctx.textAlign = 'center'
+      ctx.fillText(pop.text, pop.x, pop.y)
+    }
   }
   ctx.globalAlpha = 1
 }
 
 function drawField(player, baseX, notes) {
   const now = songTime.value
-  // lanes
-  for (let i = 0; i < LANES; i += 1) {
-    const x = baseX + i * LANE_W
-    ctx.fillStyle = i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.035)'
-    ctx.fillRect(x, 0, LANE_W, CANVAS_H)
-    if (laneFlash[player][i] > 0) {
-      ctx.fillStyle = `rgba(${hexToRgb(LANE_COLORS[i])},${laneFlash[player][i] * 0.25})`
-      ctx.fillRect(x, 0, LANE_W, CANVAS_H)
-    }
-    ctx.strokeStyle = 'rgba(255,255,255,0.06)'
-    ctx.strokeRect(x, 0, LANE_W, CANVAS_H)
+  ctx.imageSmoothingEnabled = false
+
+  // 軌道背景
+  const bgImg = g06Sprite('bg-lanes')
+  if (g06ready(bgImg)) {
+    ctx.drawImage(bgImg, baseX, 0, HALF_W, CANVAS_H)
   }
 
-  // hit line
-  ctx.save()
-  ctx.shadowColor = '#ffffff'
-  ctx.shadowBlur = 12
-  ctx.strokeStyle = 'rgba(255,255,255,0.7)'
-  ctx.lineWidth = 3
-  ctx.beginPath()
-  ctx.moveTo(baseX, HIT_Y)
-  ctx.lineTo(baseX + HALF_W, HIT_Y)
-  ctx.stroke()
-  ctx.restore()
-
-  // hit targets
+  // lanes（柔光 + 打擊閃光）
   for (let i = 0; i < LANES; i += 1) {
-    const x = baseX + i * LANE_W + LANE_W / 2
-    ctx.strokeStyle = LANE_COLORS[i]
-    ctx.globalAlpha = 0.5 + laneFlash[player][i] * 0.5
+    const x = baseX + i * LANE_W
+    if (!g06ready(bgImg)) {
+      ctx.fillStyle = i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.035)'
+      ctx.fillRect(x, 0, LANE_W, CANVAS_H)
+    }
+    if (laneFlash[player][i] > 0) {
+      ctx.fillStyle = `rgba(${hexToRgb(LANE_COLORS[i])},${laneFlash[player][i] * 0.22})`
+      ctx.fillRect(x, 0, LANE_W, CANVAS_H)
+    }
+  }
+
+  // 判定線
+  const jl = g06Sprite('judgeline')
+  if (g06ready(jl)) {
+    const h = 22
+    ctx.drawImage(jl, baseX, HIT_Y - h / 2, HALF_W, h)
+  } else {
+    ctx.save()
+    ctx.strokeStyle = 'rgba(255,255,255,0.7)'
     ctx.lineWidth = 3
     ctx.beginPath()
-    ctx.arc(x, HIT_Y, 22, 0, Math.PI * 2)
+    ctx.moveTo(baseX, HIT_Y)
+    ctx.lineTo(baseX + HALF_W, HIT_Y)
     ctx.stroke()
-    ctx.globalAlpha = 1
+    ctx.restore()
+  }
+
+  // 打擊目標圈
+  for (let i = 0; i < LANES; i += 1) {
+    const x = baseX + i * LANE_W + LANE_W / 2
+    const tgt = g06Sprite(`target-${LANE_HUE[i]}`)
+    const flash = laneFlash[player][i]
+    if (g06ready(tgt)) {
+      const sz = 50 + flash * 10
+      ctx.globalAlpha = 0.7 + flash * 0.3
+      ctx.drawImage(tgt, x - sz / 2, HIT_Y - sz / 2, sz, sz)
+      ctx.globalAlpha = 1
+    } else {
+      ctx.strokeStyle = LANE_COLORS[i]
+      ctx.globalAlpha = 0.5 + flash * 0.5
+      ctx.lineWidth = 3
+      ctx.beginPath()
+      ctx.arc(x, HIT_Y, 22, 0, Math.PI * 2)
+      ctx.stroke()
+      ctx.globalAlpha = 1
+    }
+    // 打擊命中火花
+    if (flash > 0.55) {
+      const frame = flash > 0.85 ? 'fx-hit-1' : flash > 0.7 ? 'fx-hit-2' : 'fx-hit-3'
+      const fx = g06Sprite(frame)
+      if (g06ready(fx)) {
+        const fs = 60
+        ctx.globalAlpha = flash
+        ctx.drawImage(fx, x - fs / 2, HIT_Y - fs / 2, fs, fs)
+        ctx.globalAlpha = 1
+      }
+    }
   }
 
   // notes
@@ -536,15 +593,21 @@ function drawField(player, baseX, notes) {
     const t = (now - appearAt) / APPROACH
     const y = t * HIT_Y
     if (y > CANVAS_H) continue
+    const noteImg = g06Sprite(`note-${LANE_HUE[n.lane]}`)
     const x = baseX + n.lane * LANE_W + 8
     const w = LANE_W - 16
-    ctx.save()
-    ctx.shadowColor = LANE_COLORS[n.lane]
-    ctx.shadowBlur = 14
-    ctx.fillStyle = LANE_COLORS[n.lane]
-    roundRect(x, y - 11, w, 22, 8)
-    ctx.fill()
-    ctx.restore()
+    if (g06ready(noteImg)) {
+      const h = w * (noteImg.naturalHeight / noteImg.naturalWidth)
+      ctx.drawImage(noteImg, x, y - h / 2, w, h)
+    } else {
+      ctx.save()
+      ctx.shadowColor = LANE_COLORS[n.lane]
+      ctx.shadowBlur = 14
+      ctx.fillStyle = LANE_COLORS[n.lane]
+      roundRect(x, y - 11, w, 22, 8)
+      ctx.fill()
+      ctx.restore()
+    }
   }
 }
 

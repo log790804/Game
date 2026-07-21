@@ -1,0 +1,1036 @@
+{
+  "ok": true,
+  "frames_root": "D:\\Game\\Game\\shiba-inu-run\\frames",
+  "errors": [],
+  "warnings": [
+    "running-right frame 05 has 110 non-transparent pixels near the cell edge",
+    "running-right frame 06 has 108 non-transparent pixels near the cell edge",
+    "running-right frame 07 has 113 non-transparent pixels near the cell edge",
+    "running-left frame 00 has 89 non-transparent pixels near the cell edge",
+    "running-left frame 01 has 142 non-transparent pixels near the cell edge",
+    "running-left frame 02 has 150 non-transparent pixels near the cell edge",
+    "running-left frame 03 has 116 non-transparent pixels near the cell edge",
+    "running-left frame 04 has 84 non-transparent pixels near the cell edge",
+    "running-left frame 05 has 172 non-transparent pixels near the cell edge",
+    "running-left frame 06 has 138 non-transparent pixels near the cell edge",
+    "running-left frame 07 has 201 non-transparent pixels near the cell edge",
+    "waving frame 00 has 150 non-transparent pixels near the cell edge",
+    "waving frame 01 has 156 non-transparent pixels near the cell edge",
+    "waving frame 02 has 156 non-transparent pixels near the cell edge",
+    "waving frame 03 has 138 non-transparent pixels near the cell edge",
+    "jumping frame 00 has 179 non-transparent pixels near the cell edge",
+    "jumping frame 01 has 146 non-transparent pixels near the cell edge",
+    "jumping frame 04 has 175 non-transparent pixels near the cell edge",
+    "failed frame 00 has 138 non-transparent pixels near the cell edge",
+    "failed frame 01 has 144 non-transparent pixels near the cell edge",
+    "failed frame 02 has 140 non-transparent pixels near the cell edge",
+    "failed frame 03 has 123 non-transparent pixels near the cell edge",
+    "failed frame 04 has 157 non-transparent pixels near the cell edge",
+    "failed frame 05 has 129 non-transparent pixels near the cell edge",
+    "failed frame 06 has 138 non-transparent pixels near the cell edge",
+    "failed frame 07 has 306 non-transparent pixels near the cell edge",
+    "waiting frame 00 has 168 non-transparent pixels near the cell edge",
+    "waiting frame 01 has 163 non-transparent pixels near the cell edge",
+    "waiting frame 02 has 163 non-transparent pixels near the cell edge",
+    "waiting frame 03 has 113 non-transparent pixels near the cell edge",
+    "waiting frame 04 has 129 non-transparent pixels near the cell edge",
+    "waiting frame 05 has 121 non-transparent pixels near the cell edge",
+    "review frame 05 has 60 non-transparent pixels near the cell edge"
+  ],
+  "rows": [
+    {
+      "state": "idle",
+      "expected_frames": 6,
+      "actual_frames": 6,
+      "extraction_method": "components",
+      "ok": true,
+      "errors": [],
+      "warnings": [],
+      "frames": [
+        {
+          "index": 0,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\idle\\00.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 14093,
+          "bbox": [
+            47,
+            48,
+            172,
+            203
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 1,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\idle\\01.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 14099,
+          "bbox": [
+            41,
+            48,
+            167,
+            203
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 2,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\idle\\02.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 14202,
+          "bbox": [
+            34,
+            48,
+            177,
+            204
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 3,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\idle\\03.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 14348,
+          "bbox": [
+            26,
+            48,
+            153,
+            203
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 4,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\idle\\04.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 14053,
+          "bbox": [
+            17,
+            48,
+            144,
+            203
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 5,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\idle\\05.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 14231,
+          "bbox": [
+            7,
+            48,
+            135,
+            203
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        }
+      ]
+    },
+    {
+      "state": "running-right",
+      "expected_frames": 8,
+      "actual_frames": 8,
+      "extraction_method": "components",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "running-right frame 05 has 110 non-transparent pixels near the cell edge",
+        "running-right frame 06 has 108 non-transparent pixels near the cell edge",
+        "running-right frame 07 has 113 non-transparent pixels near the cell edge"
+      ],
+      "frames": [
+        {
+          "index": 0,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running-right\\00.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 13167,
+          "bbox": [
+            29,
+            47,
+            191,
+            206
+          ],
+          "edge_pixels": 4,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 1,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running-right\\01.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 13670,
+          "bbox": [
+            21,
+            48,
+            172,
+            204
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 2,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running-right\\02.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12952,
+          "bbox": [
+            16,
+            48,
+            177,
+            204
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 3,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running-right\\03.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 13359,
+          "bbox": [
+            13,
+            5,
+            170,
+            204
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 4,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running-right\\04.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12887,
+          "bbox": [
+            10,
+            48,
+            151,
+            203
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 5,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running-right\\05.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 13368,
+          "bbox": [
+            0,
+            48,
+            160,
+            207
+          ],
+          "edge_pixels": 110,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 6,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running-right\\06.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 13093,
+          "bbox": [
+            0,
+            48,
+            137,
+            200
+          ],
+          "edge_pixels": 108,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 7,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running-right\\07.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12970,
+          "bbox": [
+            0,
+            51,
+            139,
+            207
+          ],
+          "edge_pixels": 113,
+          "chroma_adjacent_pixels": 0
+        }
+      ]
+    },
+    {
+      "state": "running-left",
+      "expected_frames": 8,
+      "actual_frames": 8,
+      "extraction_method": "components",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "running-left frame 00 has 89 non-transparent pixels near the cell edge",
+        "running-left frame 01 has 142 non-transparent pixels near the cell edge",
+        "running-left frame 02 has 150 non-transparent pixels near the cell edge",
+        "running-left frame 03 has 116 non-transparent pixels near the cell edge",
+        "running-left frame 04 has 84 non-transparent pixels near the cell edge",
+        "running-left frame 05 has 172 non-transparent pixels near the cell edge",
+        "running-left frame 06 has 138 non-transparent pixels near the cell edge",
+        "running-left frame 07 has 201 non-transparent pixels near the cell edge"
+      ],
+      "frames": [
+        {
+          "index": 0,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running-left\\00.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12119,
+          "bbox": [
+            31,
+            63,
+            191,
+            208
+          ],
+          "edge_pixels": 89,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 1,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running-left\\01.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12637,
+          "bbox": [
+            25,
+            63,
+            168,
+            208
+          ],
+          "edge_pixels": 142,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 2,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running-left\\02.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12445,
+          "bbox": [
+            15,
+            61,
+            177,
+            208
+          ],
+          "edge_pixels": 150,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 3,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running-left\\03.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12082,
+          "bbox": [
+            9,
+            63,
+            145,
+            208
+          ],
+          "edge_pixels": 116,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 4,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running-left\\04.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12473,
+          "bbox": [
+            3,
+            61,
+            142,
+            208
+          ],
+          "edge_pixels": 84,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 5,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running-left\\05.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12444,
+          "bbox": [
+            0,
+            63,
+            160,
+            208
+          ],
+          "edge_pixels": 172,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 6,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running-left\\06.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12102,
+          "bbox": [
+            0,
+            61,
+            133,
+            208
+          ],
+          "edge_pixels": 138,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 7,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running-left\\07.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12691,
+          "bbox": [
+            0,
+            61,
+            137,
+            208
+          ],
+          "edge_pixels": 201,
+          "chroma_adjacent_pixels": 0
+        }
+      ]
+    },
+    {
+      "state": "waving",
+      "expected_frames": 4,
+      "actual_frames": 4,
+      "extraction_method": "components",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "waving frame 00 has 150 non-transparent pixels near the cell edge",
+        "waving frame 01 has 156 non-transparent pixels near the cell edge",
+        "waving frame 02 has 156 non-transparent pixels near the cell edge",
+        "waving frame 03 has 138 non-transparent pixels near the cell edge"
+      ],
+      "frames": [
+        {
+          "index": 0,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\waving\\00.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12769,
+          "bbox": [
+            53,
+            64,
+            172,
+            208
+          ],
+          "edge_pixels": 150,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 1,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\waving\\01.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 13093,
+          "bbox": [
+            43,
+            64,
+            164,
+            208
+          ],
+          "edge_pixels": 156,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 2,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\waving\\02.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12935,
+          "bbox": [
+            33,
+            23,
+            177,
+            208
+          ],
+          "edge_pixels": 156,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 3,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\waving\\03.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12151,
+          "bbox": [
+            28,
+            64,
+            147,
+            208
+          ],
+          "edge_pixels": 138,
+          "chroma_adjacent_pixels": 0
+        }
+      ]
+    },
+    {
+      "state": "jumping",
+      "expected_frames": 5,
+      "actual_frames": 5,
+      "extraction_method": "components",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "jumping frame 00 has 179 non-transparent pixels near the cell edge",
+        "jumping frame 01 has 146 non-transparent pixels near the cell edge",
+        "jumping frame 04 has 175 non-transparent pixels near the cell edge"
+      ],
+      "frames": [
+        {
+          "index": 0,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\jumping\\00.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 9485,
+          "bbox": [
+            36,
+            3,
+            155,
+            208
+          ],
+          "edge_pixels": 179,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 1,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\jumping\\01.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 9898,
+          "bbox": [
+            22,
+            87,
+            151,
+            208
+          ],
+          "edge_pixels": 146,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 2,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\jumping\\02.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 11369,
+          "bbox": [
+            12,
+            24,
+            177,
+            195
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 3,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\jumping\\03.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 11615,
+          "bbox": [
+            14,
+            45,
+            158,
+            194
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 4,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\jumping\\04.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 10578,
+          "bbox": [
+            18,
+            80,
+            151,
+            208
+          ],
+          "edge_pixels": 175,
+          "chroma_adjacent_pixels": 0
+        }
+      ]
+    },
+    {
+      "state": "failed",
+      "expected_frames": 8,
+      "actual_frames": 8,
+      "extraction_method": "components",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "failed frame 00 has 138 non-transparent pixels near the cell edge",
+        "failed frame 01 has 144 non-transparent pixels near the cell edge",
+        "failed frame 02 has 140 non-transparent pixels near the cell edge",
+        "failed frame 03 has 123 non-transparent pixels near the cell edge",
+        "failed frame 04 has 157 non-transparent pixels near the cell edge",
+        "failed frame 05 has 129 non-transparent pixels near the cell edge",
+        "failed frame 06 has 138 non-transparent pixels near the cell edge",
+        "failed frame 07 has 306 non-transparent pixels near the cell edge"
+      ],
+      "frames": [
+        {
+          "index": 0,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\failed\\00.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 10977,
+          "bbox": [
+            49,
+            66,
+            147,
+            208
+          ],
+          "edge_pixels": 138,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 1,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\failed\\01.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 10224,
+          "bbox": [
+            43,
+            90,
+            143,
+            208
+          ],
+          "edge_pixels": 144,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 2,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\failed\\02.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 10222,
+          "bbox": [
+            25,
+            55,
+            131,
+            208
+          ],
+          "edge_pixels": 140,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 3,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\failed\\03.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 10738,
+          "bbox": [
+            17,
+            56,
+            134,
+            208
+          ],
+          "edge_pixels": 123,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 4,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\failed\\04.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 11812,
+          "bbox": [
+            12,
+            52,
+            144,
+            208
+          ],
+          "edge_pixels": 157,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 5,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\failed\\05.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 11907,
+          "bbox": [
+            7,
+            48,
+            160,
+            208
+          ],
+          "edge_pixels": 129,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 6,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\failed\\06.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 11125,
+          "bbox": [
+            7,
+            83,
+            115,
+            208
+          ],
+          "edge_pixels": 138,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 7,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\failed\\07.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 9317,
+          "bbox": [
+            0,
+            120,
+            137,
+            208
+          ],
+          "edge_pixels": 306,
+          "chroma_adjacent_pixels": 0
+        }
+      ]
+    },
+    {
+      "state": "waiting",
+      "expected_frames": 6,
+      "actual_frames": 6,
+      "extraction_method": "components",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "waiting frame 00 has 168 non-transparent pixels near the cell edge",
+        "waiting frame 01 has 163 non-transparent pixels near the cell edge",
+        "waiting frame 02 has 163 non-transparent pixels near the cell edge",
+        "waiting frame 03 has 113 non-transparent pixels near the cell edge",
+        "waiting frame 04 has 129 non-transparent pixels near the cell edge",
+        "waiting frame 05 has 121 non-transparent pixels near the cell edge"
+      ],
+      "frames": [
+        {
+          "index": 0,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\waiting\\00.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12353,
+          "bbox": [
+            53,
+            62,
+            162,
+            208
+          ],
+          "edge_pixels": 168,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 1,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\waiting\\01.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12362,
+          "bbox": [
+            41,
+            61,
+            152,
+            208
+          ],
+          "edge_pixels": 163,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 2,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\waiting\\02.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12344,
+          "bbox": [
+            37,
+            62,
+            147,
+            208
+          ],
+          "edge_pixels": 163,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 3,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\waiting\\03.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12415,
+          "bbox": [
+            26,
+            61,
+            141,
+            208
+          ],
+          "edge_pixels": 113,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 4,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\waiting\\04.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12541,
+          "bbox": [
+            17,
+            62,
+            138,
+            208
+          ],
+          "edge_pixels": 129,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 5,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\waiting\\05.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12646,
+          "bbox": [
+            13,
+            2,
+            160,
+            208
+          ],
+          "edge_pixels": 121,
+          "chroma_adjacent_pixels": 0
+        }
+      ]
+    },
+    {
+      "state": "running",
+      "expected_frames": 6,
+      "actual_frames": 6,
+      "extraction_method": "components",
+      "ok": true,
+      "errors": [],
+      "warnings": [],
+      "frames": [
+        {
+          "index": 0,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running\\00.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 10459,
+          "bbox": [
+            52,
+            47,
+            146,
+            199
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 1,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running\\01.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 10317,
+          "bbox": [
+            43,
+            47,
+            135,
+            199
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 2,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running\\02.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 10843,
+          "bbox": [
+            38,
+            47,
+            133,
+            199
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 3,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running\\03.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 10766,
+          "bbox": [
+            30,
+            47,
+            124,
+            199
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 4,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running\\04.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 10445,
+          "bbox": [
+            23,
+            47,
+            117,
+            199
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 5,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\running\\05.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 10378,
+          "bbox": [
+            13,
+            47,
+            106,
+            199
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        }
+      ]
+    },
+    {
+      "state": "review",
+      "expected_frames": 6,
+      "actual_frames": 6,
+      "extraction_method": "components",
+      "ok": true,
+      "errors": [],
+      "warnings": [
+        "review frame 05 has 60 non-transparent pixels near the cell edge"
+      ],
+      "frames": [
+        {
+          "index": 0,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\review\\00.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12384,
+          "bbox": [
+            49,
+            29,
+            191,
+            178
+          ],
+          "edge_pixels": 2,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 1,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\review\\01.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12380,
+          "bbox": [
+            39,
+            29,
+            161,
+            178
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 2,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\review\\02.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12960,
+          "bbox": [
+            15,
+            29,
+            177,
+            177
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 3,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\review\\03.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12060,
+          "bbox": [
+            28,
+            31,
+            153,
+            177
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 4,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\review\\04.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12714,
+          "bbox": [
+            10,
+            31,
+            136,
+            177
+          ],
+          "edge_pixels": 0,
+          "chroma_adjacent_pixels": 0
+        },
+        {
+          "index": 5,
+          "file": "D:\\Game\\Game\\shiba-inu-run\\frames\\review\\05.png",
+          "width": 192,
+          "height": 208,
+          "nontransparent_pixels": 12971,
+          "bbox": [
+            0,
+            31,
+            130,
+            177
+          ],
+          "edge_pixels": 60,
+          "chroma_adjacent_pixels": 0
+        }
+      ]
+    }
+  ]
+}

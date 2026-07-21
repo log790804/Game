@@ -106,6 +106,21 @@ const HALF = CANVAS_W / 2
 const GAME_SEC = 60
 const HOOP_Y = 150
 const RIM = 34
+
+// 像素素材
+const G16 = {}
+function g16Sprite(name) {
+  if (!G16[name]) {
+    const img = new Image()
+    img.src = `/assets/G16/${name}.png`
+    G16[name] = img
+  }
+  return G16[name]
+}
+;['bg-court', 'hoop', 'ball-basketball', 'player-p1', 'player-p2', 'shooter-p1-1', 'shooter-p1-2', 'shooter-p1-3', 'shooter-p2-1', 'shooter-p2-2', 'shooter-p2-3', 'blocker-1', 'blocker-2'].forEach(g16Sprite)
+function g16ready(img) {
+  return img && img.complete && img.naturalWidth > 0
+}
 const GRAVITY = 0.34
 const AMP = HALF / 2 - 120 // hoop horizontal travel half-width
 const SHOT_V = 18.5 // fixed shot speed (no charge); reaches the rim across the whole band
@@ -496,17 +511,24 @@ function drawCourt(side, now) {
   const cx = ox + HALF / 2
   const interfered = now < side.interferedUntil
 
-  // arena wall backdrop
-  const wall = ctx.createLinearGradient(0, 0, 0, CANVAS_H)
-  wall.addColorStop(0, '#241a36')
-  wall.addColorStop(0.5, '#2c2042')
-  wall.addColorStop(1, '#181024')
-  ctx.fillStyle = wall
-  ctx.fillRect(ox, 0, HALF, CANVAS_H)
-
-  drawCrowd(side, now)
-  drawFloor(ox)
-  drawKey(cx)
+  // arena backdrop（球場像素背景）
+  ctx.imageSmoothingEnabled = false
+  const courtImg = g16Sprite('bg-court')
+  if (g16ready(courtImg)) {
+    const sw = courtImg.naturalWidth / 2
+    const sxc = side.half === 0 ? 0 : sw
+    ctx.drawImage(courtImg, sxc, 0, sw, courtImg.naturalHeight, ox, 0, HALF, CANVAS_H)
+  } else {
+    const wall = ctx.createLinearGradient(0, 0, 0, CANVAS_H)
+    wall.addColorStop(0, '#241a36')
+    wall.addColorStop(0.5, '#2c2042')
+    wall.addColorStop(1, '#181024')
+    ctx.fillStyle = wall
+    ctx.fillRect(ox, 0, HALF, CANVAS_H)
+    drawCrowd(side, now)
+    drawFloor(ox)
+    drawKey(cx)
+  }
 
   if (interfered) {
     ctx.fillStyle = `rgba(255,93,108,${0.12 + 0.06 * Math.sin(now / 80)})`
@@ -526,8 +548,10 @@ function drawCourt(side, now) {
     b.trail.forEach((t, i) => (i === 0 ? ctx.moveTo(t.x, t.y) : ctx.lineTo(t.x, t.y)))
     ctx.stroke()
     ctx.lineCap = 'butt'
+    drawShooter(side, now, 3)
     drawBall(b.x, b.y)
   } else {
+    drawShooter(side, now, side.charging ? 2 : 1)
     drawBall(side.launchX, side.launchY)
   }
 
@@ -681,6 +705,15 @@ function drawHoop(side, now) {
   ctx.lineTo(hx, topY + 10)
   ctx.stroke()
 
+  const hoopImg = g16Sprite('hoop')
+  if (g16ready(hoopImg)) {
+    const hw = 96
+    const hh = hw * (hoopImg.naturalHeight / hoopImg.naturalWidth)
+    // 讓籃框（圖片下緣附近）對齊 HOOP_Y
+    ctx.drawImage(hoopImg, hx - hw / 2, HOOP_Y - hh * 0.72, hw, hh)
+    return
+  }
+
   // backboard shadow
   ctx.fillStyle = 'rgba(0,0,0,0.3)'
   ctx.fillRect(hx - 33, topY + 3, 72, 50)
@@ -766,9 +799,27 @@ function drawGuide(side) {
   }
 }
 
+function drawShooter(side, now, pose) {
+  const pid = side.half === 0 ? 'p1' : 'p2'
+  const img = g16Sprite(`shooter-${pid}-${pose}`)
+  if (!g16ready(img)) return
+  const w = 70
+  const h = w * (img.naturalHeight / img.naturalWidth)
+  ctx.imageSmoothingEnabled = false
+  ctx.drawImage(img, side.launchX - w / 2, CANVAS_H - 4 - h, w, h)
+}
+
 function drawSprite(side, now) {
   const s = side.sprite
   if (!s) return
+  const blkImg = g16Sprite(Math.floor(now / 180) % 2 ? 'blocker-2' : 'blocker-1')
+  if (g16ready(blkImg)) {
+    const bw = 54
+    const bh = bw * (blkImg.naturalHeight / blkImg.naturalWidth)
+    ctx.imageSmoothingEnabled = false
+    ctx.drawImage(blkImg, s.x - bw / 2, s.y - bh / 2, bw, bh)
+    return
+  }
   ctx.save()
   ctx.translate(s.x, s.y)
   // wings
@@ -870,6 +921,20 @@ function roundRectPath(x, y, w, h, r) {
 }
 
 function drawBall(x, y) {
+  const ballImg = g16Sprite('ball-basketball')
+  if (g16ready(ballImg)) {
+    if (y > FLOOR_TOP - 20) {
+      const sa = Math.max(0, Math.min(0.3, (y - (FLOOR_TOP - 20)) / 300))
+      ctx.fillStyle = `rgba(0,0,0,${sa})`
+      ctx.beginPath()
+      ctx.ellipse(x, Math.min(CANVAS_H - 6, y + 16), 12, 4, 0, 0, Math.PI * 2)
+      ctx.fill()
+    }
+    const sz = 28
+    ctx.imageSmoothingEnabled = false
+    ctx.drawImage(ballImg, x - sz / 2, y - sz / 2, sz, sz)
+    return
+  }
   ctx.save()
   // floor shadow when low
   if (y > FLOOR_TOP - 20) {

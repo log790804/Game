@@ -177,6 +177,21 @@ const P2_KEYS = ['u', 'i', 'o', 'j', 'k', 'l', 'm', ',', '.']
 const KEY_LABELS_1 = ['Q', 'W', 'E', 'A', 'S', 'D', 'Z', 'X', 'C']
 const KEY_LABELS_2 = ['U', 'I', 'O', 'J', 'K', 'L', 'M', ',', '.']
 
+// 像素素材
+const G09 = {}
+function g09Sprite(name) {
+  if (!G09[name]) {
+    const img = new Image()
+    img.src = `/assets/G09/${name}.png`
+    G09[name] = img
+  }
+  return G09[name]
+}
+;['bg-farm', 'hole', 'mole', 'mole-hit', 'hammer', 'ui-star', 'fx-bonk-1', 'fx-bonk-2', 'fx-bonk-3'].forEach(g09Sprite)
+function g09ready(img) {
+  return img && img.complete && img.naturalWidth > 0
+}
+
 const canvasRef = ref(null)
 const stageRef = ref(null)
 
@@ -396,13 +411,18 @@ function loop(now) {
 }
 
 function render() {
-  ctx.fillStyle = '#10240f'
-  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
-  // grassy field
-  drawFieldBg(0, '#1f4d24', '#143618')
-  drawFieldBg(HALF, '#1f4d24', '#143618')
+  ctx.imageSmoothingEnabled = false
+  const bgImg = g09Sprite('bg-farm')
+  if (g09ready(bgImg)) {
+    ctx.drawImage(bgImg, 0, 0, CANVAS_W, CANVAS_H)
+  } else {
+    ctx.fillStyle = '#10240f'
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+    drawFieldBg(0, '#1f4d24', '#143618')
+    drawFieldBg(HALF, '#1f4d24', '#143618')
+  }
 
-  ctx.strokeStyle = 'rgba(255,255,255,0.12)'
+  ctx.strokeStyle = 'rgba(255,255,255,0.18)'
   ctx.setLineDash([8, 10])
   ctx.lineWidth = 2
   ctx.beginPath()
@@ -436,59 +456,83 @@ function drawFieldBg(baseX, c1, c2) {
 }
 
 function drawSide(side, labels) {
+  const holeImg = g09Sprite('hole')
   side.centers.forEach((c, i) => {
     const hole = side.holes[i]
-    // hole
-    ctx.save()
-    ctx.fillStyle = '#3a2a18'
-    ctx.beginPath()
-    ctx.ellipse(c.x, c.y + 18, 46, 20, 0, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.fillStyle = '#241a0f'
-    ctx.beginPath()
-    ctx.ellipse(c.x, c.y + 18, 38, 15, 0, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.restore()
-
-    // mole
+    // mole（在洞口後緣冒出，先畫）
     if (hole.mole) {
       drawMole(c, hole.mole)
     }
 
+    // hole（畫在地鼠前緣，蓋住下半身製造從洞冒出的效果）
+    if (g09ready(holeImg)) {
+      const hw = 104
+      const hh = hw * (holeImg.naturalHeight / holeImg.naturalWidth)
+      ctx.drawImage(holeImg, c.x - hw / 2, c.y + 18 - hh * 0.42, hw, hh)
+    } else {
+      ctx.save()
+      ctx.fillStyle = '#3a2a18'
+      ctx.beginPath()
+      ctx.ellipse(c.x, c.y + 18, 46, 20, 0, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.restore()
+    }
+
     // key label
-    ctx.fillStyle = 'rgba(255,255,255,0.5)'
+    ctx.fillStyle = 'rgba(255,255,255,0.6)'
     ctx.font = 'bold 14px system-ui, sans-serif'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.fillText(labels[i], c.x, c.y + 44)
+    ctx.fillText(labels[i], c.x, c.y + 50)
   })
 }
 
 function drawMole(c, mole) {
   const rise = mole.rise
-  const y = c.y + 18 - rise * 44
+  const y = c.y + 18 - rise * 50
   ctx.save()
   // clip to hole so mole emerges
   ctx.beginPath()
-  ctx.rect(c.x - 46, 0, 92, c.y + 18)
+  ctx.rect(c.x - 48, 0, 96, c.y + 20)
   ctx.clip()
-  let emoji = '🐹'
-  if (mole.type === 'golden') {
-    ctx.shadowColor = '#ffd23f'
-    ctx.shadowBlur = 18
-    emoji = '🐹'
-  } else if (mole.type === 'bomb') {
-    emoji = '💣'
-  }
-  ctx.font = '46px serif'
-  ctx.textAlign = 'center'
-  ctx.textBaseline = 'middle'
-  ctx.fillText(emoji, c.x, y)
-  if (mole.type === 'golden') {
-    ctx.font = '24px serif'
-    ctx.fillText('👑', c.x, y - 24)
+
+  const hit = mole.state === 'down'
+  const sprName = hit ? 'mole-hit' : 'mole'
+  const img = g09Sprite(sprName)
+  if (mole.type !== 'bomb' && g09ready(img)) {
+    if (mole.type === 'golden') {
+      ctx.shadowColor = '#ffd23f'
+      ctx.shadowBlur = 18
+    }
+    const sz = 76
+    ctx.drawImage(img, c.x - sz / 2, y - sz * 0.55, sz, sz)
+    if (mole.type === 'golden') {
+      const star = g09Sprite('ui-star')
+      if (g09ready(star)) ctx.drawImage(star, c.x - 16, y - sz * 0.55 - 22, 32, 32)
+    }
+  } else {
+    let emoji = mole.type === 'bomb' ? '💣' : '🐹'
+    if (mole.type === 'golden') {
+      ctx.shadowColor = '#ffd23f'
+      ctx.shadowBlur = 18
+    }
+    ctx.font = '46px serif'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(emoji, c.x, y)
   }
   ctx.restore()
+
+  // 敲擊火花
+  if (hit) {
+    const f = Math.max(0, Math.min(1, mole.life / 160))
+    const frame = f > 0.66 ? 'fx-bonk-1' : f > 0.33 ? 'fx-bonk-2' : 'fx-bonk-3'
+    const fx = g09Sprite(frame)
+    if (g09ready(fx)) {
+      const fs = 64
+      ctx.drawImage(fx, c.x - fs / 2, y - fs * 0.6, fs, fs)
+    }
+  }
 }
 
 function drawPopups(side) {

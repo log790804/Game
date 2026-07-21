@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>星露小島 3D Prototype</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="prototype-shell">
+      <section class="game-wrap">
+        <canvas id="game-canvas" aria-label="3D 小島生活模擬原型"></canvas>
+
+        <div class="hud hud-top">
+          <div class="chip">
+            <span class="label">時間</span>
+            <strong id="time-label">06:00</strong>
+          </div>
+          <div class="chip">
+            <span class="label">任務</span>
+            <strong id="quest-label">木頭 0 / 3</strong>
+          </div>
+          <div class="chip">
+            <span class="label">背包</span>
+            <strong id="inventory-label">空</strong>
+          </div>
+        </div>
+
+        <div id="prompt" class="prompt hidden"></div>
+
+        <section id="dialogue" class="dialogue hidden" aria-live="polite">
+          <p class="speaker" id="dialogue-speaker">NPC</p>
+          <p class="line" id="dialogue-line"></p>
+        </section>
+
+        <section class="controls">
+          <span><kbd>WASD</kbd> 移動</span>
+          <span><kbd>E</kbd> 互動 / 撿取</span>
+          <span><kbd>F</kbd> 全螢幕</span>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="./animal-village.js"></script>
+  </body>
+</html>

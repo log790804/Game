@@ -1,0 +1,98 @@
+{
+ "folder": "G14",
+ "title": "G14 泡泡龍對戰",
+ "theme": "泡泡魔法・可愛小龍・彩色泡泡",
+ "items": [
+  {
+   "f": "bubble-pink.png",
+   "label": "泡泡・pink",
+   "use": "六色配對消除",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "bubble-blue.png",
+   "label": "泡泡・blue",
+   "use": "六色配對消除",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "bubble-green.png",
+   "label": "泡泡・green",
+   "use": "六色配對消除",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "bubble-yellow.png",
+   "label": "泡泡・yellow",
+   "use": "六色配對消除",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "bubble-purple.png",
+   "label": "泡泡・purple",
+   "use": "六色配對消除",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "bubble-orange.png",
+   "label": "泡泡・orange",
+   "use": "六色配對消除",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "ui-arrow.png",
+   "label": "發射瞄準箭頭",
+   "use": "以底部為軸心旋轉瞄準",
+   "w": 64,
+   "h": 104
+  },
+  {
+   "f": "fx-pop-1.png",
+   "label": "泡泡破裂 1/3",
+   "use": "依泡泡顏色可加 CSS hue-rotate",
+   "w": 80,
+   "h": 80
+  },
+  {
+   "f": "fx-pop-2.png",
+   "label": "泡泡破裂 2/3",
+   "use": "依泡泡顏色可加 CSS hue-rotate",
+   "w": 80,
+   "h": 80
+  },
+  {
+   "f": "fx-pop-3.png",
+   "label": "泡泡破裂 3/3",
+   "use": "依泡泡顏色可加 CSS hue-rotate",
+   "w": 80,
+   "h": 80
+  },
+  {
+   "f": "bg-sky.png",
+   "label": "天空背景",
+   "use": "泡泡牆懸於上方",
+   "w": 1280,
+   "h": 720
+  },
+  {
+   "f": "dragon-p1.png",
+   "label": "1P 小龍(綠)",
+   "use": "1P 泡泡射手,坐發射器旁",
+   "w": 128,
+   "h": 120
+  },
+  {
+   "f": "dragon-p2.png",
+   "label": "2P 小龍(紫)",
+   "use": "2P 泡泡射手,坐發射器旁",
+   "w": 128,
+   "h": 120
+  }
+ ]
+}

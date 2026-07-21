@@ -184,6 +184,22 @@ const COLORS = {
 }
 const SEND_TABLE = { 0: 0, 1: 0, 2: 1, 3: 2, 4: 4 }
 
+// 像素素材
+const G10 = {}
+function g10Sprite(name) {
+  if (!G10[name]) {
+    const img = new Image()
+    img.src = `/assets/G10/${name}.png`
+    G10[name] = img
+  }
+  return G10[name]
+}
+const BLOCK_SPRITE = { I: 'block-i', O: 'block-o', T: 'block-t', S: 'block-s', Z: 'block-z', J: 'block-j', L: 'block-l', G: 'block-garbage' }
+;['bg-arena', 'block-i', 'block-o', 'block-t', 'block-s', 'block-z', 'block-j', 'block-l', 'block-garbage', 'fx-line-clear-1', 'fx-line-clear-2', 'fx-line-clear-3'].forEach(g10Sprite)
+function g10ready(img) {
+  return img && img.complete && img.naturalWidth > 0
+}
+
 const canvasRef = ref(null)
 const stageRef = ref(null)
 
@@ -459,8 +475,14 @@ function loop(now) {
 }
 
 function render() {
-  ctx.fillStyle = '#0a0d1c'
-  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+  ctx.imageSmoothingEnabled = false
+  const bgImg = g10Sprite('bg-arena')
+  if (g10ready(bgImg)) {
+    ctx.drawImage(bgImg, 0, 0, CANVAS_W, CANVAS_H)
+  } else {
+    ctx.fillStyle = '#0a0d1c'
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+  }
   drawBoard(game.p1, BOARD1_X, '玩家 1', '#36d6e6')
   drawBoard(game.p2, BOARD2_X, '玩家 2', '#ff7ab0')
 }
@@ -475,8 +497,8 @@ function drawBoard(side, ox, label, accent) {
 
   drawNext(side, ox + BOARD_W - 86, 8, accent)
 
-  // playfield bg
-  ctx.fillStyle = '#0e1330'
+  // playfield bg（半透明，露出競技場背景）
+  ctx.fillStyle = 'rgba(14, 19, 48, 0.72)'
   ctx.fillRect(ox, BOARD_Y, BOARD_W, BOARD_H)
   // grid
   ctx.strokeStyle = 'rgba(120,140,200,0.07)'
@@ -497,7 +519,7 @@ function drawBoard(side, ox, label, accent) {
   // settled blocks
   for (let r = 0; r < ROWS; r += 1) {
     for (let c = 0; c < COLS; c += 1) {
-      if (side.board[r][c]) drawCell(ox + c * CELL, BOARD_Y + r * CELL, COLORS[side.board[r][c]])
+      if (side.board[r][c]) drawCell(ox + c * CELL, BOARD_Y + r * CELL, side.board[r][c])
     }
   }
 
@@ -505,8 +527,8 @@ function drawBoard(side, ox, label, accent) {
   if (side.piece && side.alive) {
     let gy = side.piece.y
     while (!collides(side, side.piece.matrix, side.piece.x, gy + 1)) gy += 1
-    drawPiece(side.piece, ox, gy, COLORS[side.piece.type], true)
-    drawPiece(side.piece, ox, side.piece.y, COLORS[side.piece.type], false)
+    drawPiece(side.piece, ox, gy, side.piece.type, true)
+    drawPiece(side.piece, ox, side.piece.y, side.piece.type, false)
   }
 
   // clear flash
@@ -551,13 +573,13 @@ function drawNext(side, x, y, accent) {
   const py = y + (54 - h) / 2
   for (let r = 0; r < m.length; r += 1) {
     for (let c = 0; c < m[r].length; c += 1) {
-      if (m[r][c]) drawCellSized(px + c * s, py + r * s, s, COLORS[side.next])
+      if (m[r][c]) drawCellSized(px + c * s, py + r * s, s, side.next)
     }
   }
   void accent
 }
 
-function drawPiece(piece, ox, py, color, ghost) {
+function drawPiece(piece, ox, py, type, ghost) {
   const m = piece.matrix
   for (let r = 0; r < m.length; r += 1) {
     for (let c = 0; c < m[r].length; c += 1) {
@@ -566,23 +588,29 @@ function drawPiece(piece, ox, py, color, ghost) {
       if (y < 0) continue
       const x = piece.x + c
       if (ghost) {
-        ctx.strokeStyle = color
+        ctx.strokeStyle = COLORS[type] || '#fff'
         ctx.globalAlpha = 0.4
         ctx.lineWidth = 2
         ctx.strokeRect(ox + x * CELL + 2, BOARD_Y + y * CELL + 2, CELL - 4, CELL - 4)
         ctx.globalAlpha = 1
       } else {
-        drawCell(ox + x * CELL, BOARD_Y + y * CELL, color)
+        drawCell(ox + x * CELL, BOARD_Y + y * CELL, type)
       }
     }
   }
 }
 
-function drawCell(x, y, color) {
-  drawCellSized(x, y, CELL, color)
+function drawCell(x, y, type) {
+  drawCellSized(x, y, CELL, type)
 }
 
-function drawCellSized(x, y, size, color) {
+function drawCellSized(x, y, size, type) {
+  const img = g10Sprite(BLOCK_SPRITE[type])
+  if (g10ready(img)) {
+    ctx.drawImage(img, x, y, size, size)
+    return
+  }
+  const color = COLORS[type] || '#888'
   ctx.fillStyle = color
   ctx.fillRect(x + 1, y + 1, size - 2, size - 2)
   ctx.fillStyle = 'rgba(255,255,255,0.28)'

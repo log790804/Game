@@ -1,0 +1,58 @@
+{
+  "rows": [
+    {
+      "state": "idle",
+      "row": 0,
+      "frame_count": 6,
+      "method": "components"
+    },
+    {
+      "state": "running-right",
+      "row": 1,
+      "frame_count": 8,
+      "method": "components"
+    },
+    {
+      "state": "running-left",
+      "row": 2,
+      "frame_count": 8,
+      "method": "components"
+    },
+    {
+      "state": "waving",
+      "row": 3,
+      "frame_count": 4,
+      "method": "components"
+    },
+    {
+      "state": "jumping",
+      "row": 4,
+      "frame_count": 5,
+      "method": "components"
+    },
+    {
+      "state": "failed",
+      "row": 5,
+      "frame_count": 8,
+      "method": "components"
+    },
+    {
+      "state": "waiting",
+      "row": 6,
+      "frame_count": 6,
+      "method": "components"
+    },
+    {
+      "state": "running",
+      "row": 7,
+      "frame_count": 6,
+      "method": "components"
+    },
+    {
+      "state": "review",
+      "row": 8,
+      "frame_count": 6,
+      "method": "components"
+    }
+  ]
+}

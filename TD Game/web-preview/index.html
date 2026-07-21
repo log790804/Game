@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TD Game Prototype</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="preview-shell">
+      <section class="game-panel" aria-label="塔防遊戲初步原型">
+        <header class="top-hud">
+          <div>
+            <p class="hud-label">關卡</p>
+            <strong>森林邊境 01</strong>
+          </div>
+          <div class="hud-stats" aria-label="遊戲狀態">
+            <span>生命 <strong id="lifeValue">20</strong></span>
+            <span>金幣 <strong id="goldValue">680</strong></span>
+            <span>波次 <strong id="waveValue">1 / 1</strong></span>
+            <span>場上怪物 <strong id="enemyCountValue">0</strong></span>
+          </div>
+          <button class="primary-action" id="restartButton" type="button">重開預覽</button>
+        </header>
+
+        <div class="battle-layout">
+          <section class="battlefield" id="battlefield" aria-label="第一關戰場">
+            <img class="level-map" src="./assets/maps/level-01.svg" alt="森林邊境第一關地圖，包含怪物路徑與塔位" />
+            <div class="route-guide" aria-hidden="true"></div>
+            <div class="build-layer" id="buildLayer"></div>
+            <div class="enemy-layer" id="enemyLayer"></div>
+            <div class="projectile-layer" id="projectileLayer"></div>
+            <div class="effect-layer" id="effectLayer"></div>
+            <div class="base-label base-label-start">入口</div>
+            <div class="base-label base-label-end">基地</div>
+          </section>
+
+          <aside class="side-panel" aria-label="塔與技能資訊">
+            <div class="panel-block selected-card">
+              <p class="hud-label">已選擇</p>
+              <h1 id="towerName">箭塔</h1>
+              <div class="tower-card-preview">
+                <img id="towerPreview" src="./assets/towers/tower-arrow.png" alt="已選擇防禦塔" />
+              </div>
+              <dl class="stat-list">
+                <div>
+                  <dt>傷害</dt>
+                  <dd id="towerDamage">34</dd>
+                </div>
+                <div>
+                  <dt>攻速</dt>
+                  <dd id="towerSpeed">快</dd>
+                </div>
+                <div>
+                  <dt>範圍</dt>
+                  <dd id="towerRange">中</dd>
+                </div>
+                <div>
+                  <dt>效果</dt>
+                  <dd id="towerEffect">暴擊</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="panel-block">
+              <p class="hud-label">主動技能</p>
+              <div class="skill-row">
+                <button class="skill skill-meteor" data-skill="meteor" type="button" aria-label="隕石轟炸"></button>
+                <button class="skill skill-frost" data-skill="frost" type="button" aria-label="冰霜領域"></button>
+                <button class="skill skill-time" data-skill="time" type="button" aria-label="時間停止"></button>
+              </div>
+            </div>
+
+            <div class="panel-block note-panel">
+              <p>塔位固定在地圖上的建造區。投射物碰到怪物才會扣血，血條歸零後怪物會消失。</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

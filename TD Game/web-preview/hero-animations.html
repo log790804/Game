@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hero Animation Preview</title>
+    <link rel="stylesheet" href="./hero-animations.css" />
+  </head>
+  <body>
+    <main class="animation-shell">
+      <section class="stage-panel" aria-label="角色動畫預覽">
+        <header class="stage-header">
+          <div>
+            <p class="eyebrow">TD Game</p>
+            <h1>角色動作與技能動畫</h1>
+          </div>
+          <a class="nav-link" href="./index.html">返回戰鬥預覽</a>
+        </header>
+
+        <div class="workspace">
+          <aside class="browser-panel" aria-label="角色與動作清單">
+            <label class="field-label" for="heroSelect">角色</label>
+            <select id="heroSelect"></select>
+
+            <div class="action-list" id="actionList"></div>
+          </aside>
+
+          <section class="preview-panel" aria-label="動畫播放區">
+            <div class="preview-toolbar">
+              <div>
+                <p class="eyebrow" id="heroName">-</p>
+                <h2 id="actionName">-</h2>
+              </div>
+              <div class="stats">
+                <span id="frameCount">0 frames</span>
+                <span id="frameSize">0 x 0</span>
+              </div>
+            </div>
+
+            <div class="sprite-stage">
+              <div class="sprite-shadow"></div>
+              <div class="sprite-player" id="spritePlayer" aria-label="目前動畫"></div>
+            </div>
+
+            <div class="controls" aria-label="播放控制">
+              <button id="playToggle" type="button">暫停</button>
+              <label>
+                FPS
+                <input id="fpsInput" type="range" min="3" max="24" value="12" />
+                <span id="fpsValue">12</span>
+              </label>
+              <label>
+                縮放
+                <input id="zoomInput" type="range" min="1" max="4" step="0.25" value="2" />
+                <span id="zoomValue">2x</span>
+              </label>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script src="./assets/heroes/hero-animations-data.js"></script>
+    <script src="./hero-animations.js"></script>
+  </body>
+</html>

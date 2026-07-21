@@ -101,6 +101,28 @@ const CANVAS_W = 880
 const CANVAS_H = 460
 const ROUNDS_TO_WIN = 3
 
+// 像素素材
+const G18 = {}
+function g18Sprite(name) {
+  if (!G18[name]) {
+    const img = new Image()
+    img.src = `/assets/G18/${name}.png`
+    G18[name] = img
+  }
+  return G18[name]
+}
+;['bg-sunset-desert', 'cowboy-p1-ready-r', 'cowboy-p1-shoot-r', 'cowboy-p1-dead-r', 'cowboy-p2-ready-l', 'cowboy-p2-shoot-l', 'cowboy-p2-dead-l', 'txt-ready', 'txt-draw', 'ui-signal'].forEach(g18Sprite)
+function g18ready(img) {
+  return img && img.complete && img.naturalWidth > 0
+}
+function g18Draw(name, cx, bottomY, w) {
+  const img = g18Sprite(name)
+  if (!g18ready(img)) return
+  const h = w * (img.naturalHeight / img.naturalWidth)
+  ctx.imageSmoothingEnabled = false
+  ctx.drawImage(img, cx - w / 2, bottomY - h, w, h)
+}
+
 const canvasRef = ref(null)
 const stageRef = ref(null)
 const phase = ref('intro')
@@ -224,39 +246,72 @@ function loop(now) {
 }
 
 function render() {
-  let bg = '#161a26'
-  if (game.flash) bg = game.flash.color
-  else if (game.state === 'go') bg = '#39d98a'
-  ctx.fillStyle = bg
-  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+  ctx.imageSmoothingEnabled = false
+  const bgImg = g18Sprite('bg-sunset-desert')
+  if (g18ready(bgImg)) {
+    ctx.drawImage(bgImg, 0, 0, CANVAS_W, CANVAS_H)
+  } else {
+    ctx.fillStyle = '#161a26'
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+  }
+  // 訊號色調覆蓋（核心玩法回饋）
+  if (game.flash) {
+    ctx.fillStyle = game.flash.color
+    ctx.globalAlpha = 0.42
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+    ctx.globalAlpha = 1
+  } else if (game.state === 'go') {
+    ctx.fillStyle = '#39d98a'
+    ctx.globalAlpha = 0.38
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+    ctx.globalAlpha = 1
+  }
+
+  // 牛仔對峙
+  const groundY = CANVAS_H - 24
+  const shooting = game.state === 'go' || game.state === 'done'
+  g18Draw(`cowboy-p1-${shooting ? 'shoot' : 'ready'}-r`, CANVAS_W * 0.22, groundY, 96)
+  g18Draw(`cowboy-p2-${shooting ? 'shoot' : 'ready'}-l`, CANVAS_W * 0.78, groundY, 96)
 
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
   if (game.state === 'ready') {
-    ctx.fillStyle = 'rgba(255,255,255,0.92)'
-    ctx.font = 'bold 46px system-ui, sans-serif'
-    ctx.fillText('準備…', CANVAS_W / 2, CANVAS_H / 2 - 10)
+    if (g18ready(g18Sprite('txt-ready'))) {
+      const t = g18Sprite('txt-ready')
+      const w = 200
+      ctx.drawImage(t, CANVAS_W / 2 - w / 2, CANVAS_H / 2 - 50, w, w * (t.naturalHeight / t.naturalWidth))
+    } else {
+      ctx.fillStyle = 'rgba(255,255,255,0.92)'
+      ctx.font = 'bold 46px system-ui, sans-serif'
+      ctx.fillText('準備…', CANVAS_W / 2, CANVAS_H / 2 - 10)
+    }
     ctx.font = '18px system-ui, sans-serif'
-    ctx.fillStyle = 'rgba(255,255,255,0.6)'
-    ctx.fillText('看到綠色「開槍！」再按，別偷跑', CANVAS_W / 2, CANVAS_H / 2 + 40)
+    ctx.fillStyle = 'rgba(255,255,255,0.78)'
+    ctx.fillText('看到綠色「開槍！」再按，別偷跑', CANVAS_W / 2, CANVAS_H / 2 + 30)
   } else if (game.state === 'go') {
-    ctx.fillStyle = '#05241a'
-    ctx.font = 'bold 76px system-ui, sans-serif'
-    ctx.fillText('開槍！', CANVAS_W / 2, CANVAS_H / 2)
+    const t = g18Sprite('txt-draw')
+    if (g18ready(t)) {
+      const w = 280
+      ctx.drawImage(t, CANVAS_W / 2 - w / 2, CANVAS_H / 2 - 60, w, w * (t.naturalHeight / t.naturalWidth))
+    } else {
+      ctx.fillStyle = '#05241a'
+      ctx.font = 'bold 76px system-ui, sans-serif'
+      ctx.fillText('開槍！', CANVAS_W / 2, CANVAS_H / 2)
+    }
   } else if (game.state === 'done') {
     ctx.fillStyle = '#fff'
     ctx.font = 'bold 44px system-ui, sans-serif'
-    ctx.fillText(game.reason, CANVAS_W / 2, CANVAS_H / 2 - 16)
+    ctx.fillText(game.reason, CANVAS_W / 2, 80)
     ctx.font = '22px system-ui, sans-serif'
-    if (game.reaction > 0) ctx.fillText(`反應時間 ${game.reaction} ms`, CANVAS_W / 2, CANVAS_H / 2 + 34)
+    if (game.reaction > 0) ctx.fillText(`反應時間 ${game.reaction} ms`, CANVAS_W / 2, 124)
   }
 
   // player key hints
   ctx.font = 'bold 18px system-ui, sans-serif'
   ctx.fillStyle = '#3affd0'
-  ctx.fillText('玩家 1： F', CANVAS_W * 0.25, CANVAS_H - 30)
+  ctx.fillText('玩家 1： F', CANVAS_W * 0.25, CANVAS_H - 8)
   ctx.fillStyle = '#ff9ec8'
-  ctx.fillText('玩家 2： J', CANVAS_W * 0.75, CANVAS_H - 30)
+  ctx.fillText('玩家 2： J', CANVAS_W * 0.75, CANVAS_H - 8)
 }
 
 function onKeyDown(e) {

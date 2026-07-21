@@ -120,6 +120,28 @@ const PUSH_EVERY = 5
 const GAME_SEC = 90
 const COLORS = ['#ff5d6c', '#ffd23f', '#46d0ff', '#8de96a', '#b56cff']
 
+// 像素素材
+const G14 = {}
+function g14Sprite(name) {
+  if (!G14[name]) {
+    const img = new Image()
+    img.src = `/assets/G14/${name}.png`
+    G14[name] = img
+  }
+  return G14[name]
+}
+const COLOR_SPRITE = {
+  '#ff5d6c': 'bubble-pink',
+  '#ffd23f': 'bubble-yellow',
+  '#46d0ff': 'bubble-blue',
+  '#8de96a': 'bubble-green',
+  '#b56cff': 'bubble-purple'
+}
+;['bg-sky', 'bubble-pink', 'bubble-yellow', 'bubble-blue', 'bubble-green', 'bubble-purple', 'dragon-p1', 'dragon-p2', 'ui-arrow'].forEach(g14Sprite)
+function g14ready(img) {
+  return img && img.complete && img.naturalWidth > 0
+}
+
 const canvasRef = ref(null)
 const stageRef = ref(null)
 const phase = ref('intro')
@@ -480,8 +502,14 @@ function loop(now) {
 }
 
 function render() {
-  ctx.fillStyle = '#0c1226'
-  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+  ctx.imageSmoothingEnabled = false
+  const bgImg = g14Sprite('bg-sky')
+  if (g14ready(bgImg)) {
+    ctx.drawImage(bgImg, 0, 0, CANVAS_W, CANVAS_H)
+  } else {
+    ctx.fillStyle = '#0c1226'
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+  }
   drawSide(game.p1)
   drawSide(game.p2)
   // divider
@@ -536,6 +564,22 @@ function drawSide(side) {
     drawBubble(end.x, end.y, COLORS[side.current])
     ctx.restore()
   }
+  // 瞄準箭頭 + 發射龍
+  const arrow = g14Sprite('ui-arrow')
+  if (!side.shot && g14ready(arrow)) {
+    ctx.save()
+    ctx.translate(sx, sy)
+    ctx.rotate(-(side.angle) + Math.PI / 2)
+    ctx.globalAlpha = 0.9
+    ctx.drawImage(arrow, -12, -64, 24, 52)
+    ctx.restore()
+  }
+  const dragon = g14Sprite(side.half === 0 ? 'dragon-p1' : 'dragon-p2')
+  if (g14ready(dragon)) {
+    const dw = 76
+    const dh = dw * (dragon.naturalHeight / dragon.naturalWidth)
+    ctx.drawImage(dragon, sx - dw / 2, sy - dh * 0.28, dw, dh)
+  }
   // launcher bubbles
   drawBubble(sx, sy, COLORS[side.current])
   drawBubble(side.half === 0 ? fieldX + 18 : fieldX + fieldW - 18, CANVAS_H - 24, COLORS[side.next], 12)
@@ -553,6 +597,12 @@ function drawSide(side) {
 }
 
 function drawBubble(x, y, color, radius = R - 2) {
+  const img = g14Sprite(COLOR_SPRITE[color])
+  if (g14ready(img)) {
+    const sz = radius * 2.2
+    ctx.drawImage(img, x - sz / 2, y - sz / 2, sz, sz)
+    return
+  }
   ctx.save()
   const g = ctx.createRadialGradient(x - radius * 0.3, y - radius * 0.3, 2, x, y, radius)
   g.addColorStop(0, '#ffffff')
@@ -562,9 +612,6 @@ function drawBubble(x, y, color, radius = R - 2) {
   ctx.beginPath()
   ctx.arc(x, y, radius, 0, Math.PI * 2)
   ctx.fill()
-  ctx.strokeStyle = 'rgba(0,0,0,0.15)'
-  ctx.lineWidth = 1
-  ctx.stroke()
   ctx.restore()
 }
 

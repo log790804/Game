@@ -31,10 +31,26 @@ function createSvgDataUrl(title, subtitle, from, to, textColor = '#4d3b30') {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`
 }
 
-export const DEFAULT_BACK_IMAGE = createSvgDataUrl('GAME', 'Factory', '#f6d8bf', '#ef9f89', '#fff9f2')
+export const DEFAULT_BACK_IMAGE = '/assets/G01/card-back.png'
+
+// 8 款像素符文卡面（4x4 盤面剛好 8 對全用像素圖；更大盤面不足的部分以漸層卡補齊）
+const PIXEL_FACES = [
+  'star',
+  'heart',
+  'moon',
+  'sun',
+  'crystal',
+  'clover',
+  'bolt',
+  'paw'
+].map((name) => `/assets/G01/card-face-${name}.png`)
 
 export function createDefaultFrontImages(requiredCount = 32) {
   return Array.from({ length: Math.max(requiredCount, 32) }, (_, index) => {
+    if (index < PIXEL_FACES.length) {
+      return PIXEL_FACES[index]
+    }
+
     const cardNumber = String(index + 1).padStart(2, '0')
     const palette = palettes[index % palettes.length]
     return createSvgDataUrl(`Card ${cardNumber}`, 'Game 01', palette[0], palette[1])

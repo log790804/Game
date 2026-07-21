@@ -1,0 +1,126 @@
+{
+ "folder": "G01",
+ "title": "G01 翻牌遊戲",
+ "theme": "魔法塔羅・星空記憶牌・可愛符文卡",
+ "items": [
+  {
+   "f": "card-back.png",
+   "label": "卡背",
+   "use": "所有蓋住的卡片",
+   "w": 96,
+   "h": 128
+  },
+  {
+   "f": "card-face-star.png",
+   "label": "卡面・star",
+   "use": "翻開的卡片(8 種配對圖案)",
+   "w": 96,
+   "h": 128
+  },
+  {
+   "f": "card-face-heart.png",
+   "label": "卡面・heart",
+   "use": "翻開的卡片(8 種配對圖案)",
+   "w": 96,
+   "h": 128
+  },
+  {
+   "f": "card-face-moon.png",
+   "label": "卡面・moon",
+   "use": "翻開的卡片(8 種配對圖案)",
+   "w": 96,
+   "h": 128
+  },
+  {
+   "f": "card-face-sun.png",
+   "label": "卡面・sun",
+   "use": "翻開的卡片(8 種配對圖案)",
+   "w": 96,
+   "h": 128
+  },
+  {
+   "f": "card-face-crystal.png",
+   "label": "卡面・crystal",
+   "use": "翻開的卡片(8 種配對圖案)",
+   "w": 96,
+   "h": 128
+  },
+  {
+   "f": "card-face-clover.png",
+   "label": "卡面・clover",
+   "use": "翻開的卡片(8 種配對圖案)",
+   "w": 96,
+   "h": 128
+  },
+  {
+   "f": "card-face-bolt.png",
+   "label": "卡面・bolt",
+   "use": "翻開的卡片(8 種配對圖案)",
+   "w": 96,
+   "h": 128
+  },
+  {
+   "f": "card-face-paw.png",
+   "label": "卡面・paw",
+   "use": "翻開的卡片(8 種配對圖案)",
+   "w": 96,
+   "h": 128
+  },
+  {
+   "f": "fx-match-glow-1.png",
+   "label": "配對成功光環 1/4",
+   "use": "配對成功時播放,steps 動畫",
+   "w": 128,
+   "h": 128
+  },
+  {
+   "f": "fx-match-glow-2.png",
+   "label": "配對成功光環 2/4",
+   "use": "配對成功時播放,steps 動畫",
+   "w": 128,
+   "h": 128
+  },
+  {
+   "f": "fx-match-glow-3.png",
+   "label": "配對成功光環 3/4",
+   "use": "配對成功時播放,steps 動畫",
+   "w": 128,
+   "h": 128
+  },
+  {
+   "f": "fx-match-glow-4.png",
+   "label": "配對成功光環 4/4",
+   "use": "配對成功時播放,steps 動畫",
+   "w": 128,
+   "h": 128
+  },
+  {
+   "f": "fx-sparkle-1.png",
+   "label": "閃光 1/3",
+   "use": "卡片翻開時點綴",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "fx-sparkle-2.png",
+   "label": "閃光 2/3",
+   "use": "卡片翻開時點綴",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "fx-sparkle-3.png",
+   "label": "閃光 3/3",
+   "use": "卡片翻開時點綴",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "bg-starry-table.png",
+   "label": "星空牌桌背景",
+   "use": "遊戲場景背景 1280x720",
+   "w": 1280,
+   "h": 720
+  }
+ ]
+}

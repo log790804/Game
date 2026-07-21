@@ -97,6 +97,21 @@ const CELL = 36
 const MARGIN = 34
 const SIZE = MARGIN * 2 + (N - 1) * CELL
 
+// 像素素材
+const G13 = {}
+function g13Sprite(name) {
+  if (!G13[name]) {
+    const img = new Image()
+    img.src = `/assets/G13/${name}.png`
+    G13[name] = img
+  }
+  return G13[name]
+}
+;['board', 'stone-black', 'stone-white', 'ui-win-ring', 'fx-place-1', 'fx-place-2', 'fx-place-3'].forEach(g13Sprite)
+function g13ready(img) {
+  return img && img.complete && img.naturalWidth > 0
+}
+
 const canvasRef = ref(null)
 const stageRef = ref(null)
 const phase = ref('intro')
@@ -208,33 +223,31 @@ function px(i) {
 }
 
 function render() {
-  // board background
-  ctx.fillStyle = '#e3b876'
-  ctx.fillRect(0, 0, SIZE, SIZE)
-  const grain = ctx.createLinearGradient(0, 0, SIZE, SIZE)
-  grain.addColorStop(0, 'rgba(255,255,255,0.06)')
-  grain.addColorStop(1, 'rgba(120,80,30,0.12)')
-  ctx.fillStyle = grain
-  ctx.fillRect(0, 0, SIZE, SIZE)
-  // grid
-  ctx.strokeStyle = 'rgba(60,40,15,0.7)'
-  ctx.lineWidth = 1.4
-  for (let i = 0; i < N; i += 1) {
-    ctx.beginPath()
-    ctx.moveTo(px(0), px(i))
-    ctx.lineTo(px(N - 1), px(i))
-    ctx.stroke()
-    ctx.beginPath()
-    ctx.moveTo(px(i), px(0))
-    ctx.lineTo(px(i), px(N - 1))
-    ctx.stroke()
-  }
-  // star points
-  ctx.fillStyle = 'rgba(60,40,15,0.8)'
-  for (const [r, c] of [[3, 3], [3, 11], [11, 3], [11, 11], [7, 7]]) {
-    ctx.beginPath()
-    ctx.arc(px(c), px(r), 4, 0, Math.PI * 2)
-    ctx.fill()
+  ctx.imageSmoothingEnabled = false
+  const boardImg = g13Sprite('board')
+  if (g13ready(boardImg)) {
+    ctx.drawImage(boardImg, 0, 0, SIZE, SIZE)
+  } else {
+    ctx.fillStyle = '#e3b876'
+    ctx.fillRect(0, 0, SIZE, SIZE)
+    ctx.strokeStyle = 'rgba(60,40,15,0.7)'
+    ctx.lineWidth = 1.4
+    for (let i = 0; i < N; i += 1) {
+      ctx.beginPath()
+      ctx.moveTo(px(0), px(i))
+      ctx.lineTo(px(N - 1), px(i))
+      ctx.stroke()
+      ctx.beginPath()
+      ctx.moveTo(px(i), px(0))
+      ctx.lineTo(px(i), px(N - 1))
+      ctx.stroke()
+    }
+    ctx.fillStyle = 'rgba(60,40,15,0.8)'
+    for (const [r, c] of [[3, 3], [3, 11], [11, 3], [11, 11], [7, 7]]) {
+      ctx.beginPath()
+      ctx.arc(px(c), px(r), 4, 0, Math.PI * 2)
+      ctx.fill()
+    }
   }
   // stones
   for (let r = 0; r < N; r += 1) {
@@ -278,6 +291,12 @@ function render() {
 }
 
 function drawStone(x, y, p) {
+  const img = g13Sprite(p === 'p1' ? 'stone-black' : 'stone-white')
+  if (g13ready(img)) {
+    const sz = 32
+    ctx.drawImage(img, x - sz / 2, y - sz / 2, sz, sz)
+    return
+  }
   ctx.save()
   ctx.shadowColor = 'rgba(0,0,0,0.4)'
   ctx.shadowBlur = 6
@@ -342,7 +361,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.game13-view { min-height: 100vh; padding: 24px clamp(16px,4vw,48px) 48px; color: #efe6d6; background: radial-gradient(circle at 50% -10%, #3a2c1c, #14100a 60%); font-family: 'Segoe UI', system-ui, sans-serif; }
+.game13-view { min-height: 100vh; padding: 24px clamp(16px,4vw,48px) 48px; color: #efe6d6; background: #2a1d12 url('/assets/G13/bg-wood-sakura.png') center / cover fixed no-repeat; image-rendering: pixelated; font-family: 'Segoe UI', system-ui, sans-serif; }
 .topbar { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 22px; }
 .back-link { color: #cbb084; text-decoration: none; font-size: 14px; padding: 8px 14px; border: 1px solid rgba(203,176,132,0.3); border-radius: 999px; transition: 0.2s; }
 .back-link:hover { background: rgba(203,176,132,0.12); color: #fff; }

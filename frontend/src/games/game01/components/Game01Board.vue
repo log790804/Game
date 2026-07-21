@@ -39,6 +39,11 @@
               :src="card.faceImage"
               alt="卡面"
             >
+            <span
+              v-if="card.isMatched"
+              class="memory-card__glow"
+              aria-hidden="true"
+            />
           </span>
         </span>
       </button>
@@ -136,6 +141,28 @@ h2 {
   height: 100%;
   object-fit: cover;
   display: block;
+  image-rendering: pixelated;
+}
+
+/* 配對成功光環：4 幀 steps 動畫 */
+.memory-card__glow {
+  position: absolute;
+  inset: -14%;
+  pointer-events: none;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  animation: matchGlow 0.52s steps(1, end) 2;
+  opacity: 0;
+}
+
+@keyframes matchGlow {
+  0% { background-image: url('/assets/G01/fx-match-glow-1.png'); opacity: 1; }
+  25% { background-image: url('/assets/G01/fx-match-glow-2.png'); opacity: 1; }
+  50% { background-image: url('/assets/G01/fx-match-glow-3.png'); opacity: 1; }
+  75% { background-image: url('/assets/G01/fx-match-glow-4.png'); opacity: 1; }
+  100% { opacity: 0; }
 }
 
 .memory-card__face--front {

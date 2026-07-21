@@ -1,0 +1,112 @@
+{
+ "folder": "G03",
+ "title": "G03 高樓疊疊樂",
+ "theme": "夜景建築堆疊・像素大樓",
+ "items": [
+  {
+   "f": "block-floor-a.png",
+   "label": "樓層方塊 A",
+   "use": "堆疊主體",
+   "w": 128,
+   "h": 64
+  },
+  {
+   "f": "block-floor-b.png",
+   "label": "樓層方塊 B",
+   "use": "堆疊主體",
+   "w": 128,
+   "h": 64
+  },
+  {
+   "f": "block-floor-c.png",
+   "label": "樓層方塊 C",
+   "use": "堆疊主體",
+   "w": 128,
+   "h": 64
+  },
+  {
+   "f": "block-roof.png",
+   "label": "屋頂",
+   "use": "完成一棟時蓋頂",
+   "w": 128,
+   "h": 64
+  },
+  {
+   "f": "crane-hook.png",
+   "label": "吊鉤",
+   "use": "吊著樓層左右擺動",
+   "w": 64,
+   "h": 104
+  },
+  {
+   "f": "fx-dust-1.png",
+   "label": "落地塵土 1/3",
+   "use": "方塊落地/崩塌時",
+   "w": 160,
+   "h": 72
+  },
+  {
+   "f": "fx-dust-2.png",
+   "label": "落地塵土 2/3",
+   "use": "方塊落地/崩塌時",
+   "w": 160,
+   "h": 72
+  },
+  {
+   "f": "fx-dust-3.png",
+   "label": "落地塵土 3/3",
+   "use": "方塊落地/崩塌時",
+   "w": 160,
+   "h": 72
+  },
+  {
+   "f": "ui-perfect.png",
+   "label": "PERFECT 字樣",
+   "use": "完美堆疊時彈出",
+   "w": 248,
+   "h": 56
+  },
+  {
+   "f": "bg-city-night.png",
+   "label": "城市夜景背景",
+   "use": "堆疊場景背景,下方深色區放 UI",
+   "w": 1280,
+   "h": 720
+  },
+  {
+   "f": "block-floor-d.png",
+   "label": "樓層方塊 D(紫)",
+   "use": "堆疊主體",
+   "w": 128,
+   "h": 64
+  },
+  {
+   "f": "block-floor-e.png",
+   "label": "樓層方塊 E(橙)",
+   "use": "堆疊主體",
+   "w": 128,
+   "h": 64
+  },
+  {
+   "f": "block-floor-f.png",
+   "label": "樓層方塊 F(綠)",
+   "use": "堆疊主體",
+   "w": 128,
+   "h": 64
+  },
+  {
+   "f": "block-floor-glass.png",
+   "label": "玻璃帷幕樓層",
+   "use": "反光特殊樓層",
+   "w": 128,
+   "h": 64
+  },
+  {
+   "f": "block-floor-neon.png",
+   "label": "霓虹招牌樓層",
+   "use": "夜店風特殊樓層",
+   "w": 128,
+   "h": 64
+  }
+ ]
+}

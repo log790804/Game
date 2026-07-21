@@ -1,0 +1,181 @@
+:root {
+  color-scheme: dark;
+  font-family:
+    Inter, "Noto Sans TC", "Microsoft JhengHei", system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #081217;
+  color: #f7fbf4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  background:
+    radial-gradient(circle at 24% 12%, rgba(98, 179, 132, 0.3), transparent 32%),
+    linear-gradient(180deg, #10242c 0%, #081217 100%);
+}
+
+.prototype-shell,
+.game-wrap {
+  width: 100%;
+  height: 100%;
+}
+
+.game-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+#game-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
+}
+
+.hud {
+  position: absolute;
+  left: clamp(14px, 3vw, 34px);
+  right: clamp(14px, 3vw, 34px);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.hud-top {
+  top: clamp(12px, 2.6vw, 28px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip {
+  min-width: 116px;
+  border: 1px solid rgba(221, 255, 224, 0.24);
+  border-radius: 8px;
+  padding: 9px 12px;
+  background: rgba(12, 27, 28, 0.68);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(12px);
+}
+
+.chip .label {
+  display: block;
+  color: #b6d3c0;
+  font-size: 11px;
+  letter-spacing: 0;
+  margin-bottom: 2px;
+}
+
+.chip strong {
+  font-size: 17px;
+  color: #fbffe8;
+}
+
+.prompt {
+  position: absolute;
+  left: 50%;
+  bottom: 120px;
+  z-index: 4;
+  transform: translateX(-50%);
+  border: 1px solid rgba(255, 245, 187, 0.34);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #fff8c5;
+  background: rgba(20, 34, 22, 0.78);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(10px);
+}
+
+.dialogue {
+  position: absolute;
+  left: 50%;
+  bottom: 30px;
+  z-index: 5;
+  width: min(680px, calc(100% - 28px));
+  transform: translateX(-50%);
+  border: 1px solid rgba(231, 248, 226, 0.28);
+  border-radius: 8px;
+  padding: 16px 18px;
+  background: rgba(10, 23, 26, 0.86);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(16px);
+}
+
+.dialogue .speaker {
+  margin: 0 0 6px;
+  color: #94e1ad;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dialogue .line {
+  margin: 0;
+  color: #f6f7e9;
+  font-size: clamp(16px, 2vw, 19px);
+  line-height: 1.55;
+}
+
+.controls {
+  position: absolute;
+  right: clamp(14px, 3vw, 34px);
+  bottom: clamp(14px, 3vw, 28px);
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.controls span {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: #d7e7d9;
+  background: rgba(5, 17, 20, 0.58);
+  backdrop-filter: blur(10px);
+}
+
+kbd {
+  display: inline-block;
+  min-width: 22px;
+  margin-right: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom-color: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  padding: 2px 6px;
+  color: #fff7ca;
+  background: rgba(255, 255, 255, 0.1);
+  font: inherit;
+  font-size: 12px;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .controls {
+    left: 14px;
+    right: 14px;
+    justify-content: center;
+  }
+
+  .prompt {
+    bottom: 148px;
+  }
+
+  .dialogue {
+    bottom: 72px;
+  }
+}

@@ -106,6 +106,42 @@ const BASE_SIZE = 22
 const MAX_SIZE = 64
 const AI_COUNT = 30
 
+// 像素素材
+const G15 = {}
+function g15Sprite(name) {
+  if (!G15[name]) {
+    const img = new Image()
+    img.src = `/assets/G15/${name}.png`
+    G15[name] = img
+  }
+  return G15[name]
+}
+const G15_BG = g15Sprite('bg-underwater')
+const NPC_TIERS = ['tiny', 'small', 'mid', 'big', 'shark']
+function playerTier(size) {
+  return Math.max(1, Math.min(5, 1 + Math.floor(((size - BASE_SIZE) / (MAX_SIZE - BASE_SIZE)) * 5)))
+}
+function npcTier(size) {
+  if (size < 13) return 'tiny'
+  if (size < 19) return 'small'
+  if (size < 26) return 'mid'
+  if (size < 33) return 'big'
+  return 'shark'
+}
+function g15ready(img) {
+  return img && img.complete && img.naturalWidth > 0
+}
+// 海底裝飾（固定位置）
+const G15_DECO = [
+  { n: 'deco-seaweed-a-1', x: 80, w: 60 },
+  { n: 'deco-coral-pink', x: 200, w: 80 },
+  { n: 'deco-rock', x: 320, w: 90 },
+  { n: 'deco-seaweed-b-1', x: 470, w: 56 },
+  { n: 'deco-coral-purple', x: 600, w: 80 },
+  { n: 'deco-starfish', x: 720, w: 48 },
+  { n: 'deco-seaweed-a-1', x: 840, w: 60 }
+]
+
 const canvasRef = ref(null)
 const stageRef = ref(null)
 const phase = ref('intro')
@@ -364,16 +400,34 @@ function loop(now) {
 }
 
 function render(now) {
-  const sea = ctx.createLinearGradient(0, 0, 0, CANVAS_H)
-  sea.addColorStop(0, '#0e3b5c')
-  sea.addColorStop(1, '#07263c')
-  ctx.fillStyle = sea
-  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
-  ctx.fillStyle = 'rgba(255,255,255,0.12)'
+  ctx.imageSmoothingEnabled = false
+  if (g15ready(G15_BG)) {
+    ctx.drawImage(G15_BG, 0, 0, CANVAS_W, CANVAS_H)
+  } else {
+    const sea = ctx.createLinearGradient(0, 0, 0, CANVAS_H)
+    sea.addColorStop(0, '#0e3b5c')
+    sea.addColorStop(1, '#07263c')
+    ctx.fillStyle = sea
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+  }
+  // 海底裝飾
+  for (const d of G15_DECO) {
+    const img = g15Sprite(d.n)
+    if (g15ready(img)) {
+      const h = d.w * (img.naturalHeight / img.naturalWidth)
+      ctx.drawImage(img, d.x - d.w / 2, CANVAS_H - h + 2, d.w, h)
+    }
+  }
+  const bub = g15Sprite('bubble')
   for (const bb of game.bubbles) {
-    ctx.beginPath()
-    ctx.arc(bb.x, bb.y, bb.r, 0, Math.PI * 2)
-    ctx.fill()
+    if (g15ready(bub)) {
+      ctx.drawImage(bub, bb.x - bb.r, bb.y - bb.r, bb.r * 2, bb.r * 2)
+    } else {
+      ctx.fillStyle = 'rgba(255,255,255,0.12)'
+      ctx.beginPath()
+      ctx.arc(bb.x, bb.y, bb.r, 0, Math.PI * 2)
+      ctx.fill()
+    }
   }
   for (const fish of game.ai) drawFish(fish.x, fish.y, fish.size, fish.color, fish.vx >= 0 ? 1 : -1, false, now)
   if (game.star) {
@@ -388,8 +442,8 @@ function render(now) {
     ctx.fillText('⭐', 0, 0)
     ctx.restore()
   }
-  drawFish(game.p1.x, game.p1.y, game.p1.size, game.p1.color, game.p1.dir, now < game.p1.invulUntil, now, true)
-  drawFish(game.p2.x, game.p2.y, game.p2.size, game.p2.color, game.p2.dir, now < game.p2.invulUntil, now, true)
+  drawFish(game.p1.x, game.p1.y, game.p1.size, game.p1.color, game.p1.dir, now < game.p1.invulUntil, now, 'p1')
+  drawFish(game.p2.x, game.p2.y, game.p2.size, game.p2.color, game.p2.dir, now < game.p2.invulUntil, now, 'p2')
   for (const pt of game.particles) {
     ctx.globalAlpha = Math.max(0, pt.life)
     ctx.fillStyle = pt.color
@@ -422,6 +476,27 @@ function mix(hex, target, f) {
 }
 
 function drawFish(x, y, size, color, dir, glow, now, isPlayer) {
+  // 像素魚精靈
+  const side = dir > 0 ? 'r' : 'l'
+  const frame = Math.floor(now / 160) % 2 ? 'b' : 'a'
+  const spriteName = isPlayer
+    ? `fish-${isPlayer}-L${playerTier(size)}-${frame}-${side}`
+    : `npc-${npcTier(size)}-${frame}-${side}`
+  const fimg = g15Sprite(spriteName)
+  if (g15ready(fimg)) {
+    ctx.save()
+    if (glow) {
+      ctx.shadowColor = '#ffd23f'
+      ctx.shadowBlur = 22
+    }
+    const w = size * 2.7
+    const h = w * (fimg.naturalHeight / fimg.naturalWidth)
+    ctx.imageSmoothingEnabled = false
+    ctx.drawImage(fimg, x - w / 2, y - h / 2, w, h)
+    ctx.restore()
+    return
+  }
+
   ctx.save()
   ctx.translate(x, y)
   ctx.scale(dir, 1)

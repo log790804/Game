@@ -126,6 +126,22 @@ const SPEED = 2.2
 const BULLET_SPEED = 6.5
 const FIRE_CD = 460
 
+// 像素素材
+const G11 = {}
+function g11Sprite(name) {
+  if (!G11[name]) {
+    const img = new Image()
+    img.src = `/assets/G11/${name}.png`
+    G11[name] = img
+  }
+  return G11[name]
+}
+const POWER_SPRITE = { speed: 'item-star', spread: 'item-bomb', shield: 'item-shield' }
+;['bg-battlefield', 'tank-p1', 'tank-p2', 'tile-brick', 'tile-steel', 'shell', 'item-star', 'item-bomb', 'item-shield'].forEach(g11Sprite)
+function g11ready(img) {
+  return img && img.complete && img.naturalWidth > 0
+}
+
 const canvasRef = ref(null)
 const stageRef = ref(null)
 const phase = ref('intro')
@@ -448,42 +464,56 @@ function loop(now) {
 }
 
 function render(now) {
-  ctx.fillStyle = '#11161f'
-  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+  ctx.imageSmoothingEnabled = false
+  const bgImg = g11Sprite('bg-battlefield')
+  if (g11ready(bgImg)) {
+    ctx.drawImage(bgImg, 0, 0, CANVAS_W, CANVAS_H)
+  } else {
+    ctx.fillStyle = '#11161f'
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+  }
   // tiles
+  const brickImg = g11Sprite('tile-brick')
+  const steelImg = g11Sprite('tile-steel')
   for (let r = 0; r < ROWS; r += 1) {
     for (let c = 0; c < COLS; c += 1) {
       const v = game.grid[r][c]
       if (!v) continue
       const x = c * TILE
       const y = r * TILE
-      if (v === 1) {
+      const img = v === 1 ? brickImg : steelImg
+      if (g11ready(img)) {
+        ctx.drawImage(img, x, y, TILE, TILE)
+      } else if (v === 1) {
         ctx.fillStyle = '#a45a2c'
         ctx.fillRect(x + 2, y + 2, TILE - 4, TILE - 4)
-        ctx.fillStyle = 'rgba(0,0,0,0.25)'
-        for (let i = 0; i < 4; i += 1) {
-          ctx.fillRect(x + 2, y + 2 + i * (TILE / 4), TILE - 4, 1)
-        }
       } else {
         ctx.fillStyle = '#9aa6b5'
         ctx.fillRect(x + 3, y + 3, TILE - 6, TILE - 6)
-        ctx.fillStyle = 'rgba(255,255,255,0.3)'
-        ctx.fillRect(x + 3, y + 3, TILE - 6, 4)
       }
     }
   }
   for (const p of game.powerups) drawPowerup(p, now)
   drawTank(game.p1, '#3affd0', '#13d9aa', now)
   drawTank(game.p2, '#ff9ec8', '#ff6fa8', now)
+  const shellImg = g11Sprite('shell')
   for (const b of game.bullets) {
-    ctx.save()
-    ctx.shadowColor = '#ffe66d'
-    ctx.shadowBlur = 10
-    ctx.fillStyle = '#fff3b0'
-    ctx.beginPath()
-    ctx.arc(b.x, b.y, 4, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.restore()
+    if (g11ready(shellImg)) {
+      ctx.save()
+      ctx.translate(b.x, b.y)
+      ctx.rotate(Math.atan2(b.vy, b.vx) + Math.PI / 2)
+      ctx.drawImage(shellImg, -8, -10, 16, 20)
+      ctx.restore()
+    } else {
+      ctx.save()
+      ctx.shadowColor = '#ffe66d'
+      ctx.shadowBlur = 10
+      ctx.fillStyle = '#fff3b0'
+      ctx.beginPath()
+      ctx.arc(b.x, b.y, 4, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.restore()
+    }
   }
   for (const pt of game.particles) {
     ctx.globalAlpha = Math.max(0, pt.life)
@@ -499,6 +529,12 @@ function drawPowerup(p, now) {
   const colors = { speed: '#ffd23f', spread: '#ff7a59', shield: '#46d0ff' }
   const icons = { speed: '⚡', spread: '⁂', shield: '🛡' }
   const bob = Math.sin(now / 250) * 3
+  const img = g11Sprite(POWER_SPRITE[p.type])
+  if (g11ready(img)) {
+    const sz = 34
+    ctx.drawImage(img, p.x - sz / 2, p.y - sz / 2 + bob, sz, sz)
+    return
+  }
   ctx.save()
   ctx.shadowColor = colors[p.type]
   ctx.shadowBlur = 14
@@ -527,22 +563,21 @@ function drawTank(t, light, dark, now) {
     ctx.globalAlpha = 1
   }
   ctx.globalAlpha = flicker ? 0.4 : 1
-  // body
-  ctx.fillStyle = dark
-  roundRect(-TANK / 2, -TANK / 2, TANK, TANK, 6)
-  ctx.fill()
-  // treads
-  ctx.fillStyle = 'rgba(0,0,0,0.35)'
-  ctx.fillRect(-TANK / 2, -TANK / 2, 5, TANK)
-  ctx.fillRect(TANK / 2 - 5, -TANK / 2, 5, TANK)
-  // turret
-  ctx.fillStyle = light
-  ctx.beginPath()
-  ctx.arc(0, 0, TANK / 3, 0, Math.PI * 2)
-  ctx.fill()
-  // barrel (points up = -y in local)
-  ctx.fillStyle = light
-  ctx.fillRect(-3, -TANK / 2 - 8, 6, TANK / 2)
+  const img = g11Sprite(`tank-${t.id}`)
+  if (g11ready(img)) {
+    const sz = TANK + 12
+    ctx.drawImage(img, -sz / 2, -sz / 2, sz, sz)
+  } else {
+    ctx.fillStyle = dark
+    roundRect(-TANK / 2, -TANK / 2, TANK, TANK, 6)
+    ctx.fill()
+    ctx.fillStyle = light
+    ctx.beginPath()
+    ctx.arc(0, 0, TANK / 3, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.fillStyle = light
+    ctx.fillRect(-3, -TANK / 2 - 8, 6, TANK / 2)
+  }
   ctx.restore()
   ctx.globalAlpha = 1
 }

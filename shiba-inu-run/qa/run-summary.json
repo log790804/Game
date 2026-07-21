@@ -1,0 +1,11 @@
+﻿{
+    "ok":  true,
+    "run_dir":  "D:\\Game\\Game\\shiba-inu-run",
+    "spritesheet":  "D:\\Game\\Game\\shiba-inu-run\\final\\spritesheet.webp",
+    "validation":  "D:\\Game\\Game\\shiba-inu-run\\final\\validation.json",
+    "installed_validation":  "D:\\Game\\Game\\shiba-inu-run\\final\\installed-validation.json",
+    "contact_sheet":  "D:\\Game\\Game\\shiba-inu-run\\qa\\contact-sheet.png",
+    "review":  "D:\\Game\\Game\\shiba-inu-run\\qa\\review.json",
+    "previews":  "D:\\Game\\Game\\shiba-inu-run\\qa\\previews",
+    "package":  "C:\\Users\\User\\.codex\\pets\\shiba-inu"
+}

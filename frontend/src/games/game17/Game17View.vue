@@ -100,6 +100,21 @@ import { recordGameResult } from '@/data/lobbyScore'
 const GRID = 13
 const CELL = 30
 const MAZE_PX = GRID * CELL
+
+// 像素素材
+const G17 = {}
+function g17Sprite(name) {
+  if (!G17[name]) {
+    const img = new Image()
+    img.src = `/assets/G17/${name}.png`
+    G17[name] = img
+  }
+  return G17[name]
+}
+;['bg-dungeon', 'tile-floor', 'tile-wall', 'coin', 'flag-goal', 'player-p1', 'player-p1-hop', 'player-p2', 'player-p2-hop'].forEach(g17Sprite)
+function g17ready(img) {
+  return img && img.complete && img.naturalWidth > 0
+}
 const CANVAS_W = 920
 const CANVAS_H = 460
 const HALF = CANVAS_W / 2
@@ -283,8 +298,14 @@ function loop(now) {
 }
 
 function render(now) {
-  ctx.fillStyle = '#0c1024'
-  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+  ctx.imageSmoothingEnabled = false
+  const bgImg = g17Sprite('bg-dungeon')
+  if (g17ready(bgImg)) {
+    ctx.drawImage(bgImg, 0, 0, CANVAS_W, CANVAS_H)
+  } else {
+    ctx.fillStyle = '#0c1024'
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+  }
   drawMaze(game.p1, game.p1Coins, (HALF - MAZE_PX) / 2, '玩家 1', now)
   drawMaze(game.p2, game.p2Coins, HALF + (HALF - MAZE_PX) / 2, '玩家 2', now)
   ctx.strokeStyle = 'rgba(255,255,255,0.1)'
@@ -299,24 +320,46 @@ function drawMaze(p, coinSet, ox, label, now) {
   const oy = (CANVAS_H - MAZE_PX) / 2 + 8
   ctx.save()
   ctx.translate(ox, oy)
-  // floor
-  ctx.fillStyle = '#141a36'
-  ctx.fillRect(0, 0, MAZE_PX, MAZE_PX)
-  // exit cell
-  ctx.fillStyle = 'rgba(255,210,63,0.25)'
-  ctx.fillRect((GRID - 1) * CELL, (GRID - 1) * CELL, CELL, CELL)
-  ctx.fillStyle = '#ffd23f'
+  // floor（像素地磚平鋪）
+  const floorImg = g17Sprite('tile-floor')
+  if (g17ready(floorImg)) {
+    for (let r = 0; r < GRID; r += 1) {
+      for (let c = 0; c < GRID; c += 1) {
+        ctx.drawImage(floorImg, c * CELL, r * CELL, CELL, CELL)
+      }
+    }
+  } else {
+    ctx.fillStyle = '#141a36'
+    ctx.fillRect(0, 0, MAZE_PX, MAZE_PX)
+  }
+  // exit cell —— 終點旗
+  const flag = g17Sprite('flag-goal')
+  const gx = (GRID - 1) * CELL
+  const gy = (GRID - 1) * CELL
+  if (g17ready(flag)) {
+    const fw = CELL
+    const fh = fw * (flag.naturalHeight / flag.naturalWidth)
+    ctx.drawImage(flag, gx, gy + CELL - fh, fw, fh)
+  } else {
+    ctx.fillStyle = 'rgba(255,210,63,0.25)'
+    ctx.fillRect(gx, gy, CELL, CELL)
+  }
+  // coins
+  const coinImg = g17Sprite('coin')
   ctx.font = '16px serif'
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
-  ctx.fillText('🏁', (GRID - 1) * CELL + CELL / 2, (GRID - 1) * CELL + CELL / 2)
-  // coins
   for (const key of coinSet) {
     const [r, c] = key.split(',').map(Number)
-    ctx.fillText('🪙', c * CELL + CELL / 2, r * CELL + CELL / 2)
+    if (g17ready(coinImg)) {
+      const cs = CELL * 0.66
+      ctx.drawImage(coinImg, c * CELL + (CELL - cs) / 2, r * CELL + (CELL - cs) / 2, cs, cs)
+    } else {
+      ctx.fillText('🪙', c * CELL + CELL / 2, r * CELL + CELL / 2)
+    }
   }
   // walls
-  ctx.strokeStyle = '#5b6cae'
+  ctx.strokeStyle = '#6a5436'
   ctx.lineWidth = 2.5
   ctx.lineCap = 'round'
   for (let r = 0; r < GRID; r += 1) {
@@ -330,14 +373,22 @@ function drawMaze(p, coinSet, ox, label, now) {
       if (cell.s) line(x, y + CELL, x + CELL, y + CELL)
     }
   }
-  // player
-  ctx.shadowColor = p.color
-  ctx.shadowBlur = 12
-  ctx.fillStyle = p.color
-  ctx.beginPath()
-  ctx.arc(p.px, p.py, CELL * 0.3, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.shadowBlur = 0
+  // player（移動時用跳躍幀）
+  const pid = p === game.p2 ? 'p2' : 'p1'
+  const moving = !!p.target
+  const pImg = g17Sprite(`player-${pid}${moving && Math.floor(now / 130) % 2 ? '-hop' : ''}`)
+  if (g17ready(pImg)) {
+    const ps = CELL * 1.1
+    ctx.drawImage(pImg, p.px - ps / 2, p.py - ps / 2, ps, ps)
+  } else {
+    ctx.shadowColor = p.color
+    ctx.shadowBlur = 12
+    ctx.fillStyle = p.color
+    ctx.beginPath()
+    ctx.arc(p.px, p.py, CELL * 0.3, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.shadowBlur = 0
+  }
   ctx.restore()
   // label
   ctx.fillStyle = p.color

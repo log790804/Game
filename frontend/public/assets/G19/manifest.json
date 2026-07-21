@@ -1,0 +1,161 @@
+{
+ "folder": "G19",
+ "title": "G19 平台爭霸",
+ "theme": "平台競技場・深色舞台・紫色浮空平台・膠囊角色",
+ "items": [
+  {
+   "f": "tile-grass.png",
+   "label": "草地平台 tile",
+   "use": "浮島地面",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "tile-stone.png",
+   "label": "石磚平台 tile",
+   "use": "硬質平台",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "platform-cloud.png",
+   "label": "雲朵平台",
+   "use": "半穿透:可從下方跳上",
+   "w": 96,
+   "h": 48
+  },
+  {
+   "f": "player-p1.png",
+   "label": "1P 角色",
+   "use": "走/跳,翻轉換向",
+   "w": 128,
+   "h": 128
+  },
+  {
+   "f": "player-p2.png",
+   "label": "2P 角色",
+   "use": "走/跳,翻轉換向",
+   "w": 128,
+   "h": 128
+  },
+  {
+   "f": "item-star.png",
+   "label": "無敵星星",
+   "use": "短暫無敵",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "item-sword.png",
+   "label": "玩具劍",
+   "use": "撿到可擊飛對手",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "fx-hit-1.png",
+   "label": "受擊特效 1/3",
+   "use": "被打到時",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "fx-hit-2.png",
+   "label": "受擊特效 2/3",
+   "use": "被打到時",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "fx-hit-3.png",
+   "label": "受擊特效 3/3",
+   "use": "被打到時",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "fx-poof-1.png",
+   "label": "掉落消失煙霧 1/3",
+   "use": "角色掉出場外時",
+   "w": 96,
+   "h": 96
+  },
+  {
+   "f": "fx-poof-2.png",
+   "label": "掉落消失煙霧 2/3",
+   "use": "角色掉出場外時",
+   "w": 96,
+   "h": 96
+  },
+  {
+   "f": "fx-poof-3.png",
+   "label": "掉落消失煙霧 3/3",
+   "use": "角色掉出場外時",
+   "w": 96,
+   "h": 96
+  },
+  {
+   "f": "bg-sky-islands.png",
+   "label": "天空浮島背景",
+   "use": "平台以 tile 搭建於前景",
+   "w": 1280,
+   "h": 720
+  },
+  {
+   "f": "platform-9slice.png",
+   "label": "平台・9-slice",
+   "use": "border-image slice 8,可拉任意寬度",
+   "w": 112,
+   "h": 56
+  },
+  {
+   "f": "platform-float-s.png",
+   "label": "浮空平台・小",
+   "use": "空中立足點",
+   "w": 160,
+   "h": 56
+  },
+  {
+   "f": "platform-float-m.png",
+   "label": "浮空平台・中",
+   "use": "空中立足點",
+   "w": 232,
+   "h": 56
+  },
+  {
+   "f": "platform-float-l.png",
+   "label": "浮空平台・大",
+   "use": "空中立足點",
+   "w": 328,
+   "h": 56
+  },
+  {
+   "f": "platform-ground.png",
+   "label": "主舞台平台",
+   "use": "底部主地面",
+   "w": 840,
+   "h": 64
+  },
+  {
+   "f": "char-p1.png",
+   "label": "1P 角色(青膠囊)",
+   "use": "對應現有畫面的膠囊角色,含傷害%在上方",
+   "w": 72,
+   "h": 104
+  },
+  {
+   "f": "char-p2.png",
+   "label": "2P 角色(粉膠囊)",
+   "use": "膠囊角色",
+   "w": 72,
+   "h": 104
+  },
+  {
+   "f": "bg-arena.png",
+   "label": "競技場背景(深色)",
+   "use": "對應遊戲畫面:深紫漸層+暈影+內框",
+   "w": 1280,
+   "h": 720
+  }
+ ]
+}

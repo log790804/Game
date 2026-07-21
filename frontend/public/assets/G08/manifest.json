@@ -1,0 +1,84 @@
+{
+ "folder": "G08",
+ "title": "G08 接水果大作戰",
+ "theme": "日系果園・貓咪籃子・水果雨",
+ "items": [
+  {
+   "f": "basket-cat.png",
+   "label": "貓咪籃子",
+   "use": "玩家左右移動接水果",
+   "w": 128,
+   "h": 96
+  },
+  {
+   "f": "fruit-apple.png",
+   "label": "蘋果",
+   "use": "+1 分",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "fruit-orange.png",
+   "label": "橘子",
+   "use": "+1 分",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "fruit-grape.png",
+   "label": "葡萄",
+   "use": "+2 分",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "fruit-peach.png",
+   "label": "水蜜桃",
+   "use": "+3 分",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "fruit-cherry.png",
+   "label": "櫻桃",
+   "use": "+2 分",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "bomb.png",
+   "label": "炸彈",
+   "use": "接到扣分!",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "fx-catch-1.png",
+   "label": "接到閃光 1/3",
+   "use": "籃子上方播放",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "fx-catch-2.png",
+   "label": "接到閃光 2/3",
+   "use": "籃子上方播放",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "fx-catch-3.png",
+   "label": "接到閃光 3/3",
+   "use": "籃子上方播放",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "bg-orchard.png",
+   "label": "果園背景",
+   "use": "水果由樹頂落下",
+   "w": 1280,
+   "h": 720
+  }
+ ]
+}

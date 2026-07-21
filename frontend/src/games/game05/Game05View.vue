@@ -186,6 +186,19 @@ const THEME = {
   p2: { body: '#ff7ab0', glow: '#ff9ec8', head: '#ffd0e6' }
 }
 
+// 像素素材
+const G05 = {}
+function g05Sprite(name) {
+  if (!G05[name]) {
+    const img = new Image()
+    img.src = `/assets/G05/${name}.png`
+    G05[name] = img
+  }
+  return G05[name]
+}
+;['bg-arena', 'food-apple', 'food-berry', 'food-star', 'snake-head-p1', 'snake-head-p2', 'snake-body-p1', 'snake-body-p2', 'tile-wall'].forEach(g05Sprite)
+const FOOD_SPRITES = ['food-apple', 'food-berry', 'food-star']
+
 const canvasRef = ref(null)
 const stageRef = ref(null)
 
@@ -530,11 +543,17 @@ function render(now) {
   ctx.clearRect(0, 0, CANVAS_W, CANVAS_H)
 
   // background
-  const bg = ctx.createLinearGradient(0, 0, CANVAS_W, CANVAS_H)
-  bg.addColorStop(0, '#0b1224')
-  bg.addColorStop(1, '#131a33')
-  ctx.fillStyle = bg
-  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+  ctx.imageSmoothingEnabled = false
+  const bgImg = g05Sprite('bg-arena')
+  if (bgImg.complete && bgImg.naturalWidth > 0) {
+    ctx.drawImage(bgImg, 0, 0, CANVAS_W, CANVAS_H)
+  } else {
+    const bg = ctx.createLinearGradient(0, 0, CANVAS_W, CANVAS_H)
+    bg.addColorStop(0, '#0b1224')
+    bg.addColorStop(1, '#131a33')
+    ctx.fillStyle = bg
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+  }
 
   // grid
   ctx.strokeStyle = 'rgba(120,150,220,0.07)'
@@ -552,25 +571,23 @@ function render(now) {
     ctx.stroke()
   }
 
-  // danger border
+  // danger border —— 收縮區用磚牆鋪滿
   if (game.border > 0) {
-    ctx.fillStyle = 'rgba(255,70,90,0.14)'
     const b = bounds()
+    const wall = g05Sprite('tile-wall')
+    const wallReady = wall.complete && wall.naturalWidth > 0
     for (let x = 0; x < COLS; x += 1) {
       for (let y = 0; y < ROWS; y += 1) {
         if (x < b.minX || x > b.maxX || y < b.minY || y > b.maxY) {
-          ctx.fillRect(x * CELL, y * CELL, CELL, CELL)
+          if (wallReady) {
+            ctx.drawImage(wall, x * CELL, y * CELL, CELL, CELL)
+          } else {
+            ctx.fillStyle = 'rgba(255,70,90,0.14)'
+            ctx.fillRect(x * CELL, y * CELL, CELL, CELL)
+          }
         }
       }
     }
-    ctx.strokeStyle = 'rgba(255,90,110,0.6)'
-    ctx.lineWidth = 2
-    ctx.strokeRect(
-      b.minX * CELL,
-      b.minY * CELL,
-      (b.maxX - b.minX + 1) * CELL,
-      (b.maxY - b.minY + 1) * CELL
-    )
   }
 
   // food
@@ -578,14 +595,19 @@ function render(now) {
     const cx = f.x * CELL + CELL / 2
     const cy = f.y * CELL + CELL / 2
     const pulse = 0.5 + 0.5 * Math.sin(now / 220)
-    ctx.save()
-    ctx.shadowColor = '#ff5d6c'
-    ctx.shadowBlur = 14 + pulse * 8
-    ctx.fillStyle = '#ff6b7a'
-    ctx.beginPath()
-    ctx.arc(cx, cy, CELL * 0.32, 0, Math.PI * 2)
-    ctx.fill()
-    ctx.restore()
+    const name = FOOD_SPRITES[((f.x + f.y) % FOOD_SPRITES.length + FOOD_SPRITES.length) % FOOD_SPRITES.length]
+    const fimg = g05Sprite(name)
+    if (fimg.complete && fimg.naturalWidth > 0) {
+      const sz = CELL * (0.86 + pulse * 0.1)
+      ctx.drawImage(fimg, cx - sz / 2, cy - sz / 2, sz, sz)
+    } else {
+      ctx.save()
+      ctx.fillStyle = '#ff6b7a'
+      ctx.beginPath()
+      ctx.arc(cx, cy, CELL * 0.32, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.restore()
+    }
   }
 
   // powerups
@@ -649,6 +671,10 @@ function drawSnake(s, theme, now) {
   }
   ctx.globalAlpha = s.alive ? (ghost ? 0.6 : 1) : 0.25
 
+  const headImg = g05Sprite(`snake-head-${s.id}`)
+  const bodyImg = g05Sprite(`snake-body-${s.id}`)
+  const spritesReady = headImg.complete && headImg.naturalWidth > 0 && bodyImg.complete && bodyImg.naturalWidth > 0
+
   for (let i = len - 1; i >= 0; i -= 1) {
     const cur = s.cells[i]
     const prev = s.prev[i] || cur
@@ -662,15 +688,28 @@ function drawSnake(s, theme, now) {
     const x = px * CELL
     const y = py * CELL
     const head = i === 0
-    ctx.fillStyle = head ? theme.head : theme.body
-    const inset = head ? 1.5 : 3
-    roundRect(x + inset, y + inset, CELL - inset * 2, CELL - inset * 2, head ? 9 : 7)
-    ctx.fill()
+
+    if (spritesReady) {
+      if (head) {
+        ctx.save()
+        ctx.translate(x + CELL / 2, y + CELL / 2)
+        ctx.rotate(Math.atan2(s.dir.y, s.dir.x))
+        ctx.drawImage(headImg, -CELL / 2, -CELL / 2, CELL, CELL)
+        ctx.restore()
+      } else {
+        ctx.drawImage(bodyImg, x, y, CELL, CELL)
+      }
+    } else {
+      ctx.fillStyle = head ? theme.head : theme.body
+      const inset = head ? 1.5 : 3
+      roundRect(x + inset, y + inset, CELL - inset * 2, CELL - inset * 2, head ? 9 : 7)
+      ctx.fill()
+    }
   }
   ctx.restore()
 
-  // eyes on head
-  if (s.alive) {
+  // eyes on head（精靈自帶眼睛時略過）
+  if (s.alive && !spritesReady) {
     const cur = s.cells[0]
     const prev = s.prev[0] || cur
     let px = lerp(prev.x, cur.x, t)

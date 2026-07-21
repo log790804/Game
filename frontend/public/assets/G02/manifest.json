@@ -1,0 +1,392 @@
+{
+ "folder": "G02",
+ "title": "G02 雙人射擊",
+ "theme": "雙人宇宙槍戰・Q版機甲・能量彈",
+ "items": [
+  {
+   "f": "ship-p1.png",
+   "label": "玩家1 機體",
+   "use": "1P 飛船(粉)",
+   "w": 96,
+   "h": 104
+  },
+  {
+   "f": "ship-p2.png",
+   "label": "玩家2 機體",
+   "use": "2P 飛船(藍)",
+   "w": 96,
+   "h": 104
+  },
+  {
+   "f": "bullet-p1.png",
+   "label": "1P 能量彈",
+   "use": "向上發射",
+   "w": 32,
+   "h": 48
+  },
+  {
+   "f": "bullet-p2.png",
+   "label": "2P 能量彈",
+   "use": "向上發射",
+   "w": 32,
+   "h": 48
+  },
+  {
+   "f": "fx-thruster-1.png",
+   "label": "推進火焰 1/2",
+   "use": "機尾噴焰,2 幀交替",
+   "w": 40,
+   "h": 48
+  },
+  {
+   "f": "fx-thruster-2.png",
+   "label": "推進火焰 2/2",
+   "use": "機尾噴焰,2 幀交替",
+   "w": 40,
+   "h": 48
+  },
+  {
+   "f": "fx-boom-1.png",
+   "label": "爆炸 1/4",
+   "use": "命中/擊毀,4 幀",
+   "w": 128,
+   "h": 128
+  },
+  {
+   "f": "fx-boom-2.png",
+   "label": "爆炸 2/4",
+   "use": "命中/擊毀,4 幀",
+   "w": 128,
+   "h": 128
+  },
+  {
+   "f": "fx-boom-3.png",
+   "label": "爆炸 3/4",
+   "use": "命中/擊毀,4 幀",
+   "w": 128,
+   "h": 128
+  },
+  {
+   "f": "fx-boom-4.png",
+   "label": "爆炸 4/4",
+   "use": "命中/擊毀,4 幀",
+   "w": 128,
+   "h": 128
+  },
+  {
+   "f": "ui-hp-heart.png",
+   "label": "血量愛心",
+   "use": "HP 顯示",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "ui-hpbar-frame.png",
+   "label": "血條外框",
+   "use": "內部以 CSS 填色(建議 #ff8a80→#fff3b0)",
+   "w": 192,
+   "h": 40
+  },
+  {
+   "f": "bg-space.png",
+   "label": "宇宙背景",
+   "use": "直向卷軸可上下平鋪",
+   "w": 1280,
+   "h": 720
+  },
+  {
+   "f": "enemy-ufo.png",
+   "label": "小型敵機・UFO",
+   "use": "一般雜兵,直線下降",
+   "w": 88,
+   "h": 64
+  },
+  {
+   "f": "enemy-raider.png",
+   "label": "中型敵機",
+   "use": "會左右擺動、發射子彈",
+   "w": 104,
+   "h": 96
+  },
+  {
+   "f": "boss-mecha.png",
+   "label": "Boss 關卡機",
+   "use": "關底 Boss,224×176@4x,多段血量",
+   "w": 224,
+   "h": 176
+  },
+  {
+   "f": "enemy-grunt.png",
+   "label": "敵機・雜兵",
+   "use": "由上而下俯衝,1 發即毀",
+   "w": 88,
+   "h": 88
+  },
+  {
+   "f": "enemy-fast.png",
+   "label": "敵機・快速型",
+   "use": "速度快、血量低,蛇行移動",
+   "w": 88,
+   "h": 88
+  },
+  {
+   "f": "enemy-heavy.png",
+   "label": "敵機・重裝型",
+   "use": "雙翼砲、需多發擊毀",
+   "w": 104,
+   "h": 96
+  },
+  {
+   "f": "bullet-enemy.png",
+   "label": "敵彈",
+   "use": "向下發射(紫)",
+   "w": 32,
+   "h": 40
+  },
+  {
+   "f": "boss-mothership.png",
+   "label": "Boss 母艦",
+   "use": "關卡魔王,多核心/砲塔,需多段擊破",
+   "w": 192,
+   "h": 160
+  },
+  {
+   "f": "ui-bossbar-frame.png",
+   "label": "Boss 血條外框",
+   "use": "畫面頂端,內以 CSS 填紅→黃",
+   "w": 288,
+   "h": 40
+  },
+  {
+   "f": "txt-warning.png",
+   "label": "WARNING 字樣",
+   "use": "Boss 出現前閃爍警告",
+   "w": 264,
+   "h": 56
+  },
+  {
+   "f": "fx-boss-boom-1.png",
+   "label": "Boss 爆炸 1/4",
+   "use": "擊破母艦時連續播放(可放大)",
+   "w": 128,
+   "h": 128
+  },
+  {
+   "f": "fx-boss-boom-2.png",
+   "label": "Boss 爆炸 2/4",
+   "use": "擊破母艦時連續播放(可放大)",
+   "w": 128,
+   "h": 128
+  },
+  {
+   "f": "fx-boss-boom-3.png",
+   "label": "Boss 爆炸 3/4",
+   "use": "擊破母艦時連續播放(可放大)",
+   "w": 128,
+   "h": 128
+  },
+  {
+   "f": "fx-boss-boom-4.png",
+   "label": "Boss 爆炸 4/4",
+   "use": "擊破母艦時連續播放(可放大)",
+   "w": 128,
+   "h": 128
+  },
+  {
+   "f": "shot-p1-s.png",
+   "label": "1P 粉・小彈",
+   "use": "主砲 Lv1",
+   "w": 24,
+   "h": 40
+  },
+  {
+   "f": "shot-p1-m.png",
+   "label": "1P 粉・中彈",
+   "use": "主砲 Lv2(吃 P 升級)",
+   "w": 32,
+   "h": 56
+  },
+  {
+   "f": "shot-p1-l.png",
+   "label": "1P 粉・大彈",
+   "use": "主砲 Lv3",
+   "w": 48,
+   "h": 72
+  },
+  {
+   "f": "laser-p1.png",
+   "label": "1P 粉・雷射",
+   "use": "吃 L 啟用,貫穿光束;垂直可平鋪",
+   "w": 40,
+   "h": 64
+  },
+  {
+   "f": "spread-p1.png",
+   "label": "1P 粉・散射彈",
+   "use": "吃 W 啟用,扇形多發",
+   "w": 28,
+   "h": 28
+  },
+  {
+   "f": "missile-p1.png",
+   "label": "1P 粉・導彈",
+   "use": "吃 M 啟用,追蹤敵機",
+   "w": 32,
+   "h": 68
+  },
+  {
+   "f": "shot-p2-s.png",
+   "label": "2P 藍・小彈",
+   "use": "主砲 Lv1",
+   "w": 24,
+   "h": 40
+  },
+  {
+   "f": "shot-p2-m.png",
+   "label": "2P 藍・中彈",
+   "use": "主砲 Lv2(吃 P 升級)",
+   "w": 32,
+   "h": 56
+  },
+  {
+   "f": "shot-p2-l.png",
+   "label": "2P 藍・大彈",
+   "use": "主砲 Lv3",
+   "w": 48,
+   "h": 72
+  },
+  {
+   "f": "laser-p2.png",
+   "label": "2P 藍・雷射",
+   "use": "吃 L 啟用,貫穿光束;垂直可平鋪",
+   "w": 40,
+   "h": 64
+  },
+  {
+   "f": "spread-p2.png",
+   "label": "2P 藍・散射彈",
+   "use": "吃 W 啟用,扇形多發",
+   "w": 28,
+   "h": 28
+  },
+  {
+   "f": "missile-p2.png",
+   "label": "2P 藍・導彈",
+   "use": "吃 M 啟用,追蹤敵機",
+   "w": 32,
+   "h": 68
+  },
+  {
+   "f": "boss-orb.png",
+   "label": "Boss 能量彈",
+   "use": "魔王大型彈幕",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "boss-spread-orb.png",
+   "label": "Boss 散射彈",
+   "use": "魔王扇形彈",
+   "w": 40,
+   "h": 40
+  },
+  {
+   "f": "boss-laser.png",
+   "label": "Boss 雷射",
+   "use": "魔王粗光束;垂直可平鋪",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "boss-missile.png",
+   "label": "Boss 導彈",
+   "use": "魔王追蹤導彈",
+   "w": 48,
+   "h": 80
+  },
+  {
+   "f": "fx-flame-1.png",
+   "label": "導彈尾焰 1/2",
+   "use": "導彈/Boss 導彈尾焰,2 幀(可染色)",
+   "w": 32,
+   "h": 40
+  },
+  {
+   "f": "fx-flame-2.png",
+   "label": "導彈尾焰 2/2",
+   "use": "導彈尾焰",
+   "w": 32,
+   "h": 40
+  },
+  {
+   "f": "pack-power.png",
+   "label": "裝備包・P 強化主砲",
+   "use": "吃到才升級主砲(小→中→大)",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "pack-spread.png",
+   "label": "裝備包・W 散射",
+   "use": "吃到啟用扇形散射",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "pack-missile.png",
+   "label": "裝備包・M 導彈",
+   "use": "吃到啟用追蹤導彈",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "pack-laser.png",
+   "label": "裝備包・L 雷射",
+   "use": "吃到啟用貫穿雷射",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "pack-shield.png",
+   "label": "裝備包・S 護盾",
+   "use": "吃到獲得一次護盾",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "pack-bomb.png",
+   "label": "裝備包・B 炸彈",
+   "use": "吃到清除全屏敵彈",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "fx-shield-1.png",
+   "label": "護盾啟動 1/2",
+   "use": "吃 S 後機體外護盾泡泡,2 幀脈動",
+   "w": 128,
+   "h": 136
+  },
+  {
+   "f": "fx-shield-2.png",
+   "label": "護盾啟動 2/2",
+   "use": "護盾泡泡脈動",
+   "w": 128,
+   "h": 136
+  },
+  {
+   "f": "fx-shield-break-1.png",
+   "label": "護盾破裂 1/2",
+   "use": "護盾被擊破時",
+   "w": 128,
+   "h": 136
+  },
+  {
+   "f": "fx-shield-break-2.png",
+   "label": "護盾破裂 2/2",
+   "use": "護盾被擊破時",
+   "w": 128,
+   "h": 136
+  }
+ ]
+}

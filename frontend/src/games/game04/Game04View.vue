@@ -160,6 +160,25 @@ const SPR_HEAD = 1320
 const SPR_BODY = 800
 const ROAD_AHEAD = 20
 
+// 像素素材
+const G04 = {}
+function g04Sprite(name) {
+  if (!G04[name]) {
+    const img = new Image()
+    img.src = `/assets/G04/${name}.png`
+    G04[name] = img
+  }
+  return G04[name]
+}
+;['bg-forest-track', 'kart-p1', 'kart-p2', 'item-chest', 'chest-closed', 'item-mine', 'item-shell', 'item-banana', 'item-star'].forEach(g04Sprite)
+function g04Draw(name, cx, cy, w, h) {
+  const img = g04Sprite(name)
+  if (!img.complete || img.naturalWidth === 0) return false
+  ctx.imageSmoothingEnabled = false
+  ctx.drawImage(img, cx - w / 2, cy - h / 2, w, h)
+  return true
+}
+
 const canvasRef = ref(null)
 const stageRef = ref(null)
 const phase = ref('intro')
@@ -675,18 +694,20 @@ function drawViewport(viewportIndex, player) {
   ctx.rect(vx, 0, VIEW_W, CANVAS_H)
   ctx.clip()
 
-  // 天空
-  const sky = ctx.createLinearGradient(0, 0, 0, HORIZON)
-  sky.addColorStop(0, '#8ed0ff')
-  sky.addColorStop(1, '#e6f5ff')
-  ctx.fillStyle = sky
-  ctx.fillRect(vx, 0, VIEW_W, HORIZON)
-  // 遠方山丘
-  ctx.fillStyle = '#74ab63'
-  ctx.fillRect(vx, HORIZON - 14, VIEW_W, 16)
-  // 草地
-  ctx.fillStyle = '#3f8f3a'
-  ctx.fillRect(vx, HORIZON, VIEW_W, CANVAS_H - HORIZON)
+  // 森林賽道背景（天空 + 遠景 + 草地一次到位）
+  const bg = g04Sprite('bg-forest-track')
+  if (bg.complete && bg.naturalWidth > 0) {
+    ctx.imageSmoothingEnabled = false
+    ctx.drawImage(bg, 0, 0, bg.naturalWidth, bg.naturalHeight, vx, 0, VIEW_W, CANVAS_H)
+  } else {
+    const sky = ctx.createLinearGradient(0, 0, 0, HORIZON)
+    sky.addColorStop(0, '#8ed0ff')
+    sky.addColorStop(1, '#e6f5ff')
+    ctx.fillStyle = sky
+    ctx.fillRect(vx, 0, VIEW_W, HORIZON)
+    ctx.fillStyle = '#3f8f3a'
+    ctx.fillRect(vx, HORIZON, VIEW_W, CANVAS_H - HORIZON)
+  }
 
   drawRoad(cam, player)
   drawSprites(cam, player)
@@ -840,19 +861,23 @@ function drawSprites(cam, player) {
     } else if (s.kind === 'balloon') {
       drawBalloonProj(s.p)
     } else if (s.kind === 'bomb') {
-      const sz = Math.max(14, Math.min(86, s.p.scale * 1000))
-      ctx.font = `${Math.round(sz)}px serif`
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'bottom'
-      ctx.fillText('💣', s.p.sx, s.p.sy)
+      const sz = Math.max(16, Math.min(86, s.p.scale * 1000))
+      if (!g04Draw('item-mine', s.p.sx, s.p.sy - sz * 0.35, sz, sz)) {
+        ctx.font = `${Math.round(sz)}px serif`
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'bottom'
+        ctx.fillText('💣', s.p.sx, s.p.sy)
+      }
     } else if (s.kind === 'ball') {
-      const rr = Math.max(3, Math.min(38, s.p.scale * 540))
-      ctx.save()
-      ctx.shadowColor = '#ff7a3a'
-      ctx.shadowBlur = 8
-      ctx.fillStyle = '#ff7a3a'
-      fillCircle(s.p.sx, s.p.sy, rr)
-      ctx.restore()
+      const rr = Math.max(8, Math.min(60, s.p.scale * 900))
+      if (!g04Draw('item-shell', s.p.sx, s.p.sy - rr * 0.4, rr, rr)) {
+        ctx.save()
+        ctx.shadowColor = '#ff7a3a'
+        ctx.shadowBlur = 8
+        ctx.fillStyle = '#ff7a3a'
+        fillCircle(s.p.sx, s.p.sy, rr * 0.4)
+        ctx.restore()
+      }
     }
   }
 
@@ -868,6 +893,8 @@ function drawSprites(cam, player) {
 
 function drawBalloonProj(p) {
   const sz = Math.max(7, Math.min(64, p.scale * 920))
+  // 道具寶箱（取代原本的氣球）
+  if (g04Draw('chest-closed', p.sx, p.sy - sz * 0.5, sz * 1.4, sz * 1.3)) return
   ctx.save()
   ctx.translate(p.sx, p.sy)
   ctx.strokeStyle = 'rgba(255,255,255,0.6)'
@@ -914,6 +941,33 @@ function drawWormSprite(cam, r) {
   }
   ctx.save()
   ctx.translate(0, -hop)
+
+  // 人類玩家使用毛毛蟲卡丁車像素精靈
+  if (!r.isCPU) {
+    const kartName = r === game.p2 ? 'kart-p2' : 'kart-p1'
+    const kw = Math.max(24, Math.min(150, hr * 2.6))
+    const kh = kw * (128 / 120)
+    if (star) {
+      ctx.save()
+      ctx.shadowColor = '#ffd23f'
+      ctx.shadowBlur = 18
+    }
+    const drew = g04Draw(kartName, head.sx, head.sy - kh * 0.18, kw, kh)
+    if (star) ctx.restore()
+    if (drew) {
+      if (game.elapsed < r.spinUntil) {
+        ctx.font = '16px serif'
+        ctx.textAlign = 'center'
+        ctx.fillText('💫', head.sx, head.sy - kh * 0.7)
+      }
+      ctx.fillStyle = '#fff'
+      ctx.font = '700 12px system-ui, sans-serif'
+      ctx.textAlign = 'center'
+      ctx.fillText(r.name, head.sx, head.sy - kh * 0.85)
+      ctx.restore()
+      return
+    }
+  }
 
   // 身體：尾 → 頭
   for (let i = segCount - 1; i >= 1; i -= 1) {

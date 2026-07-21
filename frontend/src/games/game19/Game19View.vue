@@ -111,6 +111,27 @@ const JUMP = 12
 const PW = 34
 const PH = 46
 
+// 像素素材
+const G19 = {}
+function g19Sprite(name) {
+  if (!G19[name]) {
+    const img = new Image()
+    img.src = `/assets/G19/${name}.png`
+    G19[name] = img
+  }
+  return G19[name]
+}
+;['bg-sky-islands', 'char-p1', 'char-p2', 'platform-ground', 'platform-float-l', 'platform-float-m', 'platform-float-s'].forEach(g19Sprite)
+function g19ready(img) {
+  return img && img.complete && img.naturalWidth > 0
+}
+function platSprite(w) {
+  if (w >= 400) return 'platform-ground'
+  if (w >= 250) return 'platform-float-l'
+  if (w >= 190) return 'platform-float-m'
+  return 'platform-float-s'
+}
+
 const PLATFORMS = [
   { x: 190, y: 420, w: 500, h: 20 },
   { x: 110, y: 300, w: 170, h: 16 },
@@ -296,18 +317,28 @@ function loop(now) {
 }
 
 function render(now) {
-  const bg = ctx.createLinearGradient(0, 0, 0, CANVAS_H)
-  bg.addColorStop(0, '#1a1430')
-  bg.addColorStop(1, '#0c0a18')
-  ctx.fillStyle = bg
-  ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+  ctx.imageSmoothingEnabled = false
+  const bgImg = g19Sprite('bg-sky-islands')
+  if (g19ready(bgImg)) {
+    ctx.drawImage(bgImg, 0, 0, CANVAS_W, CANVAS_H)
+  } else {
+    const bg = ctx.createLinearGradient(0, 0, 0, CANVAS_H)
+    bg.addColorStop(0, '#1a1430')
+    bg.addColorStop(1, '#0c0a18')
+    ctx.fillStyle = bg
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H)
+  }
   // platforms
   for (const pl of PLATFORMS) {
-    ctx.fillStyle = '#46407a'
-    roundRect(pl.x, pl.y, pl.w, pl.h, 6)
-    ctx.fill()
-    ctx.fillStyle = 'rgba(255,255,255,0.18)'
-    ctx.fillRect(pl.x, pl.y, pl.w, 3)
+    const img = g19Sprite(platSprite(pl.w))
+    if (g19ready(img)) {
+      const dh = Math.max(pl.h, 22)
+      ctx.drawImage(img, pl.x, pl.y - (dh - pl.h), pl.w, dh)
+    } else {
+      ctx.fillStyle = '#46407a'
+      roundRect(pl.x, pl.y, pl.w, pl.h, 6)
+      ctx.fill()
+    }
   }
   drawFighter(game.p1, now)
   drawFighter(game.p2, now)
@@ -324,21 +355,42 @@ function render(now) {
 function drawFighter(p, now) {
   ctx.save()
   if (p.invul > 0 && Math.floor(now / 100) % 2 === 0) ctx.globalAlpha = 0.45
-  // body
-  ctx.fillStyle = p.hitFlash > 0 ? '#fff' : p.color
-  roundRect(p.x - PW / 2, p.y - PH / 2, PW, PH, 8)
-  ctx.fill()
-  // eyes (facing)
-  ctx.fillStyle = '#10141c'
-  ctx.beginPath()
-  ctx.arc(p.x + p.facing * 7, p.y - 8, 3.5, 0, Math.PI * 2)
-  ctx.fill()
+  const pid = p === game.p2 ? 'p2' : 'p1'
+  const img = g19Sprite(`char-${pid}`)
+  if (g19ready(img)) {
+    const w = 52
+    const h = w * (img.naturalHeight / img.naturalWidth)
+    ctx.save()
+    ctx.translate(p.x, p.y + PH / 2)
+    ctx.scale(p.facing, 1)
+    if (p.hitFlash > 0) {
+      ctx.globalAlpha *= 0.7
+    }
+    ctx.imageSmoothingEnabled = false
+    ctx.drawImage(img, -w / 2, -h, w, h)
+    ctx.restore()
+  } else {
+    ctx.fillStyle = p.hitFlash > 0 ? '#fff' : p.color
+    roundRect(p.x - PW / 2, p.y - PH / 2, PW, PH, 8)
+    ctx.fill()
+    ctx.fillStyle = '#10141c'
+    ctx.beginPath()
+    ctx.arc(p.x + p.facing * 7, p.y - 8, 3.5, 0, Math.PI * 2)
+    ctx.fill()
+  }
   // attack arc
   if (p.attackActive > 0) {
-    ctx.fillStyle = 'rgba(255,210,63,0.6)'
-    ctx.beginPath()
-    ctx.arc(p.x + p.facing * (PW / 2 + 10), p.y, 18, 0, Math.PI * 2)
-    ctx.fill()
+    const fxName = `fx-hit-${(Math.floor(now / 60) % 3) + 1}`
+    const fx = g19Sprite(fxName)
+    if (g19ready(fx)) {
+      const fs = 56
+      ctx.drawImage(fx, p.x + p.facing * (PW / 2 + 10) - fs / 2, p.y - fs / 2, fs, fs)
+    } else {
+      ctx.fillStyle = 'rgba(255,210,63,0.6)'
+      ctx.beginPath()
+      ctx.arc(p.x + p.facing * (PW / 2 + 10), p.y, 18, 0, Math.PI * 2)
+      ctx.fill()
+    }
   }
   ctx.restore()
   // damage label

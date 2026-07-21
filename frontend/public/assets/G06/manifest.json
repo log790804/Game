@@ -1,0 +1,112 @@
+{
+ "folder": "G06",
+ "title": "G06 節奏大師對戰",
+ "theme": "偶像舞台・6 軌節奏・橫條音符與判定圈",
+ "items": [
+  {
+   "f": "note-pink.png",
+   "label": "橫條音符・粉",
+   "use": "沿軌道下落",
+   "w": 192,
+   "h": 56
+  },
+  {
+   "f": "note-blue.png",
+   "label": "橫條音符・藍",
+   "use": "沿軌道下落,到判定線擊打",
+   "w": 192,
+   "h": 56
+  },
+  {
+   "f": "ui-judgeline.png",
+   "label": "判定線",
+   "use": "音符到達此線時擊打",
+   "w": 320,
+   "h": 40
+  },
+  {
+   "f": "txt-perfect.png",
+   "label": "PERFECT",
+   "use": "判定字樣",
+   "w": 232,
+   "h": 56
+  },
+  {
+   "f": "txt-good.png",
+   "label": "GOOD",
+   "use": "判定字樣",
+   "w": 136,
+   "h": 56
+  },
+  {
+   "f": "txt-miss.png",
+   "label": "MISS",
+   "use": "判定字樣",
+   "w": 152,
+   "h": 56
+  },
+  {
+   "f": "fx-hit-1.png",
+   "label": "擊中閃光 1/3",
+   "use": "判定線上播放",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "fx-hit-2.png",
+   "label": "擊中閃光 2/3",
+   "use": "判定線上播放",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "fx-hit-3.png",
+   "label": "擊中閃光 3/3",
+   "use": "判定線上播放",
+   "w": 64,
+   "h": 64
+  },
+  {
+   "f": "note-purple.png",
+   "label": "橫條音符・紫",
+   "use": "沿軌道下落",
+   "w": 192,
+   "h": 56
+  },
+  {
+   "f": "target-blue.png",
+   "label": "判定圈・藍",
+   "use": "軌道底端 receptor",
+   "w": 96,
+   "h": 96
+  },
+  {
+   "f": "target-purple.png",
+   "label": "判定圈・紫",
+   "use": "軌道底端 receptor",
+   "w": 96,
+   "h": 96
+  },
+  {
+   "f": "target-pink.png",
+   "label": "判定圈・粉",
+   "use": "軌道底端 receptor",
+   "w": 96,
+   "h": 96
+  },
+  {
+   "f": "judgeline.png",
+   "label": "判定線(水平發光)",
+   "use": "音符到此線時擊打",
+   "w": 384,
+   "h": 32
+  },
+  {
+   "f": "bg-lanes.png",
+   "label": "6 軌道背景",
+   "use": "P1|P2 各 3 軌,含分隔線、判定線與 6 個 receptor",
+   "w": 1280,
+   "h": 720
+  }
+ ]
+}
