@@ -1,0 +1,14 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /gameStores/{storeId} {
+      allow read: if storeId.matches('game[0-9]{2}\\.json');
+      allow create, update: if storeId.matches('game[0-9]{2}\\.json')
+        && request.resource.data.keys().hasOnly(['records', 'currentGame', 'updatedAt'])
+        && request.resource.data.records is list
+        && request.resource.data.updatedAt is string;
+      allow delete: if false;
+    }
+  }
+}

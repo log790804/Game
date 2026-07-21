@@ -1,0 +1,65 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    env:
+      VITE_BASE_PATH: /${{ github.event.repository.name }}/
+      VITE_ROUTER_MODE: hash
+      VITE_FIREBASE_ENABLED: true
+      VITE_FIREBASE_API_KEY: AIzaSyAmkZJAFwo_KXofvTxVpECTpuaR1_Yd_bc
+      VITE_FIREBASE_AUTH_DOMAIN: dark-gateway-364508.firebaseapp.com
+      VITE_FIREBASE_PROJECT_ID: dark-gateway-364508
+      VITE_FIREBASE_STORAGE_BUCKET: dark-gateway-364508.firebasestorage.app
+      VITE_FIREBASE_MESSAGING_SENDER_ID: 979068075392
+      VITE_FIREBASE_APP_ID: 1:979068075392:web:cdd4f01fe7f6ae3ce35565
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 23
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

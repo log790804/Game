@@ -1,55 +1,22 @@
+import { fetchGameStore, writeGameStore } from '../../services/gameStoreRepository'
+
 const STORAGE_KEY = 'game01.json'
 
-function getStorage() {
-  if (typeof window === 'undefined' || !window.localStorage) {
-    throw new Error('localStorage is unavailable')
-  }
-
-  return window.localStorage
-}
-
-function createDefaultStore() {
+function normalizeStore(store) {
   return {
-    currentGame: null,
-    records: [],
-    updatedAt: new Date().toISOString()
-  }
-}
-
-function readStore() {
-  const storage = getStorage()
-  const raw = storage.getItem(STORAGE_KEY)
-
-  if (!raw) {
-    const initialStore = createDefaultStore()
-    storage.setItem(STORAGE_KEY, JSON.stringify(initialStore))
-    return initialStore
-  }
-
-  try {
-    const parsed = JSON.parse(raw)
-    return {
-      currentGame: parsed.currentGame ?? null,
-      records: Array.isArray(parsed.records) ? parsed.records : [],
-      updatedAt: parsed.updatedAt ?? new Date().toISOString()
-    }
-  } catch {
-    const initialStore = createDefaultStore()
-    storage.setItem(STORAGE_KEY, JSON.stringify(initialStore))
-    return initialStore
-  }
-}
-
-function writeStore(store) {
-  const storage = getStorage()
-  const normalizedStore = {
     currentGame: store.currentGame ?? null,
     records: Array.isArray(store.records) ? store.records : [],
-    updatedAt: new Date().toISOString()
+    updatedAt: store.updatedAt ?? new Date().toISOString()
   }
+}
 
-  storage.setItem(STORAGE_KEY, JSON.stringify(normalizedStore))
-  return normalizedStore
+async function readStore() {
+  const store = await fetchGameStore(STORAGE_KEY, { keepCurrentGame: true, recordLimit: 30 })
+  return normalizeStore(store)
+}
+
+async function writeStore(store) {
+  return writeGameStore(STORAGE_KEY, normalizeStore(store), { keepCurrentGame: true, recordLimit: 30 })
 }
 
 export async function fetchGame01Store() {
@@ -57,7 +24,7 @@ export async function fetchGame01Store() {
 }
 
 export async function saveGame01State(state) {
-  const store = readStore()
+  const store = await readStore()
   store.currentGame = {
     ...state,
     updatedAt: new Date().toISOString()
@@ -67,7 +34,7 @@ export async function saveGame01State(state) {
 }
 
 export async function resetGame01(requestBody) {
-  const store = readStore()
+  const store = await readStore()
   store.currentGame = {
     sessionId: '',
     boardSize: requestBody.boardSize ?? 4,
@@ -93,7 +60,7 @@ export async function resetGame01(requestBody) {
 }
 
 export async function appendGame01Record(record) {
-  const store = readStore()
+  const store = await readStore()
   const exists = store.records.some((item) => item.sessionId === record.sessionId)
 
   if (!exists) {
@@ -104,7 +71,7 @@ export async function appendGame01Record(record) {
 }
 
 export async function clearGame01Records() {
-  const store = readStore()
+  const store = await readStore()
   store.records = []
   return writeStore(store)
 }
