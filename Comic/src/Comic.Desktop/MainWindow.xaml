@@ -1,0 +1,548 @@
+<Window x:Class="Comic.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:selection="clr-namespace:Comic.Core.Selection;assembly=Comic.Core"
+        mc:Ignorable="d"
+        Title="Comic 離線漫畫庫"
+        Width="1240"
+        Height="800"
+        MinWidth="960"
+        MinHeight="640"
+        WindowStartupLocation="CenterScreen"
+        KeyDown="OnWindowKeyDown">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border x:Name="AppHeader"
+                Grid.Row="0"
+                Padding="20,14"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock FontSize="24" FontWeight="SemiBold" Text="Comic 離線漫畫庫" />
+                    <TextBlock Margin="0,3,0,0"
+                               Foreground="{StaticResource TextMutedBrush}"
+                               Text="選擇章節、依序下載、離線閱讀。F11 可切換全螢幕。" />
+                </StackPanel>
+                <Border Grid.Column="1"
+                        Padding="10,6"
+                        VerticalAlignment="Center"
+                        Background="{StaticResource SurfaceAltBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4">
+                    <TextBlock Foreground="{StaticResource TextMutedBrush}" Text="Windows · .NET 10 · WPF" />
+                </Border>
+            </Grid>
+        </Border>
+
+        <TabControl x:Name="MainTabs"
+                    Grid.Row="1"
+                    Margin="16"
+                    SelectionChanged="OnMainTabsSelectionChanged">
+            <TabItem Header="下載管理 (_D)">
+                <Grid Margin="16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0"
+                            Padding="16"
+                            Background="{StaticResource SurfaceBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="4">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,12,10"
+                                       VerticalAlignment="Center" FontWeight="SemiBold" Text="漫畫網址" />
+                            <TextBox Grid.Row="0" Grid.Column="1" Margin="0,0,12,10"
+                                     Text="{Binding MangaUrl, UpdateSourceTrigger=PropertyChanged}"
+                                     AutomationProperties.Name="HappyMH 漫畫網址" />
+                            <StackPanel Grid.Row="0" Grid.Column="2" Margin="0,0,0,10"
+                                        Orientation="Horizontal">
+                                <Button Margin="0,0,8,0"
+                                        Style="{StaticResource PrimaryButtonStyle}"
+                                        IsDefault="True"
+                                        IsEnabled="{Binding CanStartOperation}"
+                                        Click="OnLoadComicClick"
+                                        Content="載入漫畫 (_L)" />
+                                <Button IsEnabled="{Binding CanStartOperation}"
+                                        Click="OnManualVerificationClick"
+                                        AutomationProperties.Name="開啟 HappyMH 手動驗證視窗"
+                                        Content="手動驗證… (_V)" />
+                            </StackPanel>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,0,12,0"
+                                       VerticalAlignment="Center" FontWeight="SemiBold" Text="漫畫庫位置" />
+                            <TextBox Grid.Row="1" Grid.Column="1" Margin="0,0,12,0"
+                                     Text="{Binding LibraryRoot, UpdateSourceTrigger=PropertyChanged}"
+                                     AutomationProperties.Name="本機漫畫庫資料夾" />
+                            <Button Grid.Row="1" Grid.Column="2"
+                                    IsEnabled="{Binding CanStartOperation}"
+                                    Click="OnBrowseLibraryClick"
+                                    Content="選擇資料夾…" />
+                        </Grid>
+                    </Border>
+
+                    <Grid Grid.Row="1" Margin="0,16,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock FontSize="20" FontWeight="SemiBold" Text="{Binding ComicTitle}" />
+                            <TextBlock Margin="0,4,0,0"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       Text="{Binding ComicSummary}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom">
+                            <Button Margin="0,0,8,0" IsEnabled="{Binding CanDownload}"
+                                    Click="OnSelectAllClick" Content="全選" />
+                            <Button IsEnabled="{Binding CanDownload}"
+                                    Click="OnClearSelectionClick" Content="清除" />
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="12" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+
+                        <ListView Grid.Column="0"
+                                  ItemsSource="{Binding Chapters}"
+                                  VirtualizingStackPanel.IsVirtualizing="True"
+                                  VirtualizingStackPanel.VirtualizationMode="Recycling"
+                                  AutomationProperties.Name="可下載漫畫章節清單">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="Padding" Value="8,6" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="48" />
+                                        <ColumnDefinition Width="90" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox Grid.Column="0"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}"
+                                              AutomationProperties.Name="選擇章節" />
+                                    <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                                               Foreground="{StaticResource TextMutedBrush}"
+                                               Text="{Binding Sequence, StringFormat=順序 {0}}" />
+                                    <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{Binding Title}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        </ListView>
+
+                        <Border Grid.Column="2"
+                                Padding="12"
+                                Background="{StaticResource SurfaceBrush}"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="4">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <TextBlock FontSize="17"
+                                           FontWeight="SemiBold"
+                                           Text="{Binding DownloadHistory.Count, StringFormat=下載歷史（{0}）}" />
+                                <TextBlock Grid.Row="1"
+                                           Margin="0,4,0,10"
+                                           Foreground="{StaticResource TextMutedBrush}"
+                                           Text="已完成章節會從左側排除；本機檔案不足時會重新開放下載。" />
+                                <ListView Grid.Row="2"
+                                          ItemsSource="{Binding DownloadHistory}"
+                                          VirtualizingStackPanel.IsVirtualizing="True"
+                                          AutomationProperties.Name="歷史下載紀錄">
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                            <Setter Property="Padding" Value="8,6" />
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <TextBlock FontWeight="SemiBold" Text="{Binding Title}" />
+                                                <TextBlock Margin="0,3,0,0"
+                                                           Foreground="{StaticResource TextMutedBrush}"
+                                                           Text="{Binding Details}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <Grid Grid.Row="3" Margin="0,12,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <ProgressBar Grid.Row="0" Height="8" Minimum="0" Maximum="100"
+                                     Value="{Binding DownloadPercent, Mode=OneWay}"
+                                     AutomationProperties.Name="下載進度" />
+                        <Grid Grid.Row="1" Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal">
+                                <TextBlock Margin="0,0,8,0"
+                                           VerticalAlignment="Center"
+                                           FontWeight="SemiBold"
+                                           Text="下載模式" />
+                                <ComboBox Width="112"
+                                          ItemsSource="{Binding DownloadModes}"
+                                          SelectedValuePath="Mode"
+                                          SelectedValue="{Binding SelectedDownloadMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          IsEnabled="{Binding CanStartOperation}"
+                                          AutomationProperties.Name="下載模式">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Foreground="#12181D"
+                                                       Text="{Binding DisplayName}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+                            <TextBlock Grid.Column="1"
+                                       Margin="12,0"
+                                       VerticalAlignment="Center"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       Text="{Binding DownloadModeDescription}" />
+                            <StackPanel Grid.Column="2"
+                                        HorizontalAlignment="Right"
+                                        Orientation="Horizontal">
+                                <Button Margin="0,0,8,0"
+                                        Style="{StaticResource DangerButtonStyle}"
+                                        IsEnabled="{Binding CanCancel}"
+                                        Click="OnCancelClick"
+                                        Content="取消" />
+                                <Button Style="{StaticResource PrimaryButtonStyle}"
+                                        IsEnabled="{Binding CanDownload}"
+                                        Click="OnDownloadClick"
+                                        Content="下載選取章節 (_S)" />
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="離線閱讀 (_R)">
+                <Grid Margin="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="420" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <ScrollViewer Grid.Column="0"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  VerticalScrollBarVisibility="Auto"
+                                  AutomationProperties.Name="離線閱讀控制區">
+                        <StackPanel>
+                            <Border Padding="12"
+                                    Background="{StaticResource SurfaceBrush}"
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4">
+                                <StackPanel>
+                                    <TextBlock FontSize="17" FontWeight="SemiBold" Text="漫畫庫" />
+                                    <TextBlock Margin="0,6,0,10"
+                                               Foreground="{StaticResource TextMutedBrush}"
+                                               TextTrimming="CharacterEllipsis"
+                                               ToolTip="{Binding Reader.LibraryPath}"
+                                               Text="{Binding Reader.LibraryPath}" />
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="8" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Button Grid.Column="0"
+                                                Style="{StaticResource PrimaryButtonStyle}"
+                                                Click="OnRefreshLibraryClick"
+                                                Content="重新掃描漫畫庫" />
+                                        <Button Grid.Column="2"
+                                                Click="OnOpenChapterFolderClick"
+                                                Content="開啟其他資料夾…" />
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Margin="0,12,0,0"
+                                    Padding="12"
+                                    Background="{StaticResource SurfaceBrush}"
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4">
+                                <StackPanel>
+                                    <TextBlock Margin="0,0,0,10"
+                                               FontSize="17"
+                                               FontWeight="SemiBold"
+                                               Text="章節導覽" />
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="8" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Button Grid.Column="0"
+                                                IsEnabled="{Binding Reader.CanGoPreviousChapter}"
+                                                Click="OnPreviousChapterClick"
+                                                Content="← 上一回" />
+                                        <Button Grid.Column="2"
+                                                IsEnabled="{Binding Reader.CanGoNextChapter}"
+                                                Click="OnNextChapterClick"
+                                                Content="下一回 →" />
+                                    </Grid>
+                                    <Grid Margin="0,12,0,0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="48" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Row="0" Grid.Column="0"
+                                                   Margin="0,0,8,8"
+                                                   VerticalAlignment="Center"
+                                                   FontWeight="SemiBold"
+                                                   Text="漫畫" />
+                                        <ComboBox Grid.Row="0" Grid.Column="1"
+                                                  Margin="0,0,0,8"
+                                                  ItemsSource="{Binding Reader.Comics}"
+                                                  SelectedItem="{Binding Reader.SelectedComic, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  AutomationProperties.Name="選擇離線漫畫">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Foreground="#12181D" Text="{Binding DisplayName}" />
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                        <TextBlock Grid.Row="1" Grid.Column="0"
+                                                   Margin="0,0,8,0"
+                                                   VerticalAlignment="Center"
+                                                   FontWeight="SemiBold"
+                                                   Text="章節" />
+                                        <ComboBox Grid.Row="1" Grid.Column="1"
+                                                  ItemsSource="{Binding Reader.Chapters}"
+                                                  SelectedItem="{Binding Reader.SelectedChapter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  AutomationProperties.Name="選擇離線章節">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Foreground="#12181D" Text="{Binding DisplayName}" />
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
+                                    </Grid>
+                                    <TextBlock Margin="0,8,0,0"
+                                               Foreground="{StaticResource TextMutedBrush}"
+                                               TextWrapping="Wrap"
+                                               Text="{Binding Reader.SelectionHint}" />
+                                    <Button Margin="0,10,0,0"
+                                            Style="{StaticResource PrimaryButtonStyle}"
+                                            IsEnabled="{Binding Reader.CanCheckLatest}"
+                                            Click="OnCheckLatestClick"
+                                            AutomationProperties.Name="查看所選漫畫最新章節"
+                                            AutomationProperties.HelpText="切換至下載管理並檢查是否有尚未下載的最新章節"
+                                            Content="查看最新" />
+                                </StackPanel>
+                            </Border>
+
+                            <Border Margin="0,12,0,0"
+                                    Padding="12"
+                                    Background="{StaticResource SurfaceBrush}"
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4">
+                                <StackPanel>
+                                    <TextBlock FontSize="17" FontWeight="SemiBold" Text="圖片寬度" />
+                                    <Grid Margin="0,10,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="36" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="36" />
+                                        </Grid.ColumnDefinitions>
+                                        <Button Grid.Column="0"
+                                                Padding="0"
+                                                Click="OnDecreasePageWidthClick"
+                                                AutomationProperties.Name="縮小漫畫圖片"
+                                                Content="−" />
+                                        <Slider Grid.Column="1"
+                                                Margin="10,0"
+                                                VerticalAlignment="Center"
+                                                Minimum="{x:Static selection:ReaderDisplayWidthPolicy.Minimum}"
+                                                Maximum="{x:Static selection:ReaderDisplayWidthPolicy.Maximum}"
+                                                TickFrequency="{x:Static selection:ReaderDisplayWidthPolicy.Step}"
+                                                SmallChange="{x:Static selection:ReaderDisplayWidthPolicy.Step}"
+                                                LargeChange="160"
+                                                IsSnapToTickEnabled="True"
+                                                Value="{Binding Reader.PageMaxWidth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                AutomationProperties.Name="調整漫畫圖片寬度"
+                                                AutomationProperties.HelpText="縮小長條漫畫在橫向螢幕上的顯示寬度" />
+                                        <Button Grid.Column="2"
+                                                Padding="0"
+                                                Click="OnIncreasePageWidthClick"
+                                                AutomationProperties.Name="放大漫畫圖片"
+                                                Content="+" />
+                                    </Grid>
+                                    <Grid Margin="0,8,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock VerticalAlignment="Center"
+                                                   Text="{Binding Reader.PageWidthLabel}" />
+                                        <Button Grid.Column="1"
+                                                Padding="12,7"
+                                                Click="OnResetPageWidthClick"
+                                                AutomationProperties.Name="重設漫畫圖片寬度"
+                                                Content="重設" />
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Margin="0,12,0,0"
+                                    Padding="12"
+                                    Background="{StaticResource SurfaceBrush}"
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4">
+                                <StackPanel>
+                                    <TextBlock Foreground="{StaticResource TextMutedBrush}"
+                                               TextWrapping="Wrap"
+                                               AutomationProperties.LiveSetting="Polite"
+                                               Text="{Binding Reader.StatusText}" />
+                                    <TextBlock Margin="0,5,0,0"
+                                               Foreground="{StaticResource TextMutedBrush}"
+                                               TextWrapping="Wrap"
+                                               Text="{Binding Reader.HistoryText}" />
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <Border x:Name="ReaderViewport"
+                            Grid.Column="2"
+                            Background="#080B0E"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1">
+                        <Grid>
+                            <ScrollViewer x:Name="ReaderScrollViewer"
+                                          HorizontalScrollBarVisibility="Disabled"
+                                          VerticalScrollBarVisibility="Auto"
+                                          Focusable="True"
+                                          ScrollChanged="OnReaderScrollChanged"
+                                          AutomationProperties.Name="連續漫畫閱讀區">
+                                <StackPanel HorizontalAlignment="Stretch">
+                                    <ItemsControl x:Name="ReaderPagesControl"
+                                                  HorizontalContentAlignment="Stretch"
+                                                  ItemsSource="{Binding Reader.PageItems}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid HorizontalAlignment="Stretch">
+                                                    <Image MaxWidth="{Binding DataContext.Reader.PageMaxWidth, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                                           HorizontalAlignment="Center"
+                                                           Source="{Binding Image}"
+                                                           Stretch="Uniform"
+                                                           AutomationProperties.Name="{Binding PageLabel}" />
+                                                    <Border Margin="24,12"
+                                                            Padding="16"
+                                                            Background="{StaticResource SurfaceBrush}"
+                                                            BorderBrush="{StaticResource DangerBrush}"
+                                                            BorderThickness="1">
+                                                        <Border.Style>
+                                                            <Style TargetType="Border">
+                                                                <Setter Property="Visibility" Value="Visible" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding ErrorMessage}" Value="">
+                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Border.Style>
+                                                        <TextBlock Foreground="{StaticResource DangerBrush}"
+                                                                   Text="{Binding ErrorMessage}" />
+                                                    </Border>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                    <Button Margin="24"
+                                            HorizontalAlignment="Center"
+                                            Style="{StaticResource PrimaryButtonStyle}"
+                                            IsEnabled="{Binding Reader.CanGoNextChapter}"
+                                            Click="OnNextChapterClick"
+                                            AutomationProperties.Name="本回讀完後接續下一回"
+                                            Content="本回已讀完，繼續下一回 →" />
+                                </StackPanel>
+                            </ScrollViewer>
+                            <Border Margin="0,0,20,16"
+                                    Padding="10,5"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Bottom"
+                                    Background="#D912181D"
+                                    CornerRadius="4"
+                                    IsHitTestVisible="False">
+                                <TextBlock FontWeight="SemiBold" Text="{Binding Reader.PageLabel}" />
+                            </Border>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <StatusBar x:Name="GlobalStatusBar"
+                   Grid.Row="2"
+                   Padding="12,6"
+                   Background="{StaticResource SurfaceBrush}"
+                   BorderBrush="{StaticResource BorderBrush}"
+                   BorderThickness="0,1,0,0">
+            <TextBlock AutomationProperties.LiveSetting="Polite" Text="{Binding StatusText}" />
+        </StatusBar>
+    </Grid>
+</Window>
